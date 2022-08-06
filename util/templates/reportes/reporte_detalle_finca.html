@@ -1,0 +1,689 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <title>Test</title>
+    {# Load the tag library #}
+    {% load bootstrap5 %}
+
+    {# Load CSS and JavaScript #}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+
+    {# Display django.contrib.messages as Bootstrap alerts #}
+    {% bootstrap_messages %}
+    <style>
+        .hidden {
+            display: hidden;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        table {
+            border: 1px solid;
+            margin: 0 auto;
+            width: 70%;
+        }
+
+        td,
+        th {
+            text-align: center;
+            border: 1px solid;
+        }
+
+        .columna {
+            border: 1px solid;
+            box-sizing: border-box;
+        }
+
+        .columna_x {
+            box-sizing: border-box;
+        }
+
+        .columna_1 {
+            border-bottom: 1px solid;
+            box-sizing: border-box;
+        }
+
+        .columna_2 {
+            border-right: 1px solid;
+            box-sizing: border-box;
+        }
+
+        .columna_3 {
+            border-left: 1px solid;
+            box-sizing: border-box;
+        }
+
+        .columna_4 {
+            border-right: 1px solid;
+            box-sizing: border-box;
+        }
+
+        .columna_5 {
+            border-top: 1px solid;
+            border-left: 1px solid;
+            border-right: 1px solid;
+            box-sizing: border-box;
+        }
+
+        #cultivo_imagen img {
+            width: 70%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: auto;
+            margin-bottom: auto;  
+        }
+
+        .grafana_inicio{
+            width: 110%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        .grafana_historico{
+            width: 95%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        header div img {
+            height: 60%;
+        }
+
+        .banner{
+            color: #fff;
+        }
+
+        .bg-success{
+            background-color: green;
+            color: #fff;
+        }
+
+        .bg-white{
+            background-color: #fff;
+            color: #fff;
+        }
+
+        @page {
+            @top-left {
+                content: element(pageHeader);
+            }
+
+            @top-right{
+                content: "Fecha: {{ fecha }}";
+            }
+
+
+            @bottom-center {
+                content: "Página "counter(page) " de "counter(pages);
+            }
+        }
+
+        @media print {
+            #divHeader {
+                position: running(pageHeader);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="hidden" id="divHeader">
+        <div class="d-flex flex-row align-items-center justify-content-end">
+            <img src="{{ logo }}" alt="My image" />
+        </div>
+    </header>
+
+    <h2>Reporte detallado de la finca {{ finca }} con datos recopilados en {{ title }}</h2>
+    <br>
+    <div class="banner bg-success center">
+        <br>
+        <h2>
+            Información General
+        </h2>
+        <br>
+    </div>
+    <br>
+    <div>
+        <h3>
+            Usuario
+        </h3>
+        <hr>
+        <div class="row columna">
+            <div class="col columna_x">
+                <p>
+                    <br>
+                    &nbsp;&nbsp;&nbsp;<strong>Nombre: </strong>
+                    {{ usuario.user.first_name }} {{ usuario.user.last_name }}
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4 columna_1 columna_2 columna_3">
+                <p>
+                    <br>
+                    &nbsp;&nbsp;&nbsp;<strong>Usuario: </strong>
+                    {{ usuario.user.username }}
+                </p>
+            </div>
+            <div class="col columna_1 columna_4">
+                <p>
+                    <br>
+                    &nbsp;&nbsp;&nbsp;<strong>Correo: </strong>
+                    {{ usuario.user.email }}
+                </p>
+            </div>
+        </div>
+    </div>
+            
+    
+    <br>
+    
+    <div>
+        <h3>
+            Cultivo
+        </h3>
+        <hr>
+        <div class="row columna_5">
+            <div class="col columna_x">
+                <div class="row">
+                    <div class="col-4 columna_1 center columna_2" id="cultivo_imagen">
+                        <p>
+                            <br>
+                            <strong>{{ planta }}</strong>
+                        </p>
+                        <hr>
+                        <img src="{{ foto_cultivo }}" alt="My image"/>
+                    </div>
+                    <div class="col columna_1 center">
+                        <p>
+                            <br>
+                            <strong>Condiciones ideales de crecimiento</strong>
+                        </p>
+                        <hr>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Medida</th>
+                                    <th>Mínimo</th>
+                                    <th>Máximo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Temperatura</td>
+                                    <td>{{ cultivo.minimo_temperatura }} °C</td>
+                                    <td>{{ cultivo.maximo_temperatura }} °C</td>
+                                </tr>
+                                <tr>
+                                    <td>Nivel de Lluvia</td>
+                                    <td>{{ cultivo.minimo_precipitacion }} ml</td>
+                                    <td>{{ cultivo.maximo_precipitacion }} ml</td>
+                                </tr>
+                                <tr>
+                                    <td>Humedad</td>
+                                    <td>{{ cultivo.minimo_humedad }} %H</td>
+                                    <td>{{ cultivo.maximo_humedad }} %H</td>
+                                </tr>
+                                <tr>
+                                    <td>Radiación Solar</td>
+                                    <td>{{ cultivo.minimo_radiacion }} lux</td>
+                                    <td>{{ cultivo.maximo_radiacion }} lux</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="banner bg-white center">
+        <br>
+        <h2>
+            Datos Reportados en las fincas del usuario
+        </h2>
+        <br>
+    </div>
+    <br>
+    <br>
+    <div class="banner bg-white center">
+        <br>
+        <h2>
+            Datos reportados en las fincas del usuario
+        </h2>
+        <br>
+    </div>
+    
+    
+    <div class="banner bg-success center">
+        <br>
+        <h2>
+            Datos reportados de Temperatura en la finca {{ finca }}
+        </h2>
+        <br>
+    </div>
+    <br>
+    <div>
+        <h3>
+            Valores Registrados
+        </h3>
+        <hr>
+        <div class="row columna_5">
+            <div class="col columna_x">
+                <div class="row">
+                    <div class="col-4 columna_1 center columna_2" id="cultivo_imagen">
+                        <p>
+                            <br>
+                            <strong>Valor Actual</strong>
+                        </p>
+                        <hr>
+                        <img class="grafana_inicio" src="{{ url_inicio_temperatura }}" alt="My image" />
+                    </div>
+                    <div class="col columna_1 center">
+                        <p>
+                            <br>
+                            <strong>Valor Detallado de la finca</strong>
+                        </p>
+                        <hr>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Finca</th>
+                                    <th>Mínimo<br>[°C]</th>
+                                    <th>Promedio<br>[°C]</th>
+                                    <th>Máximo<br>[°C]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for data in lista_temperatura_finca %}
+                                    <tr>
+                                        {% for item in data %}
+                                        <td>{{ item }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <br>
+    <br>
+    <div>
+        <h3>
+            Registro Histórico
+        </h3>
+        <hr>
+        <div>
+            <img class="grafana_historico" src="{{ url_historico_temperatura }}" alt="My image" />
+        </div>
+    </div>
+    <br>
+    <br>
+    <div>
+        <h3>
+            Valores Registrados por los nodos en la red
+        </h3>
+        <hr>
+        {% if there_is_data %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Nodo</th>
+                    <th>Mínimo<br>[°C]</th>
+                    <th>Promedio<br>[°C]</th>
+                    <th>Máximo<br>[°C]</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in lista_temperatura_nodo %}
+                    <tr>
+                        {% for item in data %}
+                        <td>{{ item }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="center">
+            No hay datos de nodos para el tiempo seleccionado
+        </div>
+        {% endif %}
+    </div>
+    <br>
+    <div class="banner bg-success center">
+        <br>
+        <h2>
+            Datos reportados del nivel de lluvia en la finca {{ finca }}
+        </h2>
+        <br>
+    </div>
+    <br>
+    <div>
+        <h3>
+            Valores Registrados
+        </h3>
+        <hr>
+        <div class="row columna_5">
+            <div class="col columna_x">
+                <div class="row">
+                    <div class="col-4 columna_1 center columna_2" id="cultivo_imagen">
+                        <p>
+                            <br>
+                            <strong>Valor Actual</strong>
+                        </p>
+                        <hr>
+                        <img class="grafana_inicio" src="{{ url_inicio_precipitacion }}" alt="My image" />
+                    </div>
+                    <div class="col columna_1 center">
+                        <p>
+                            <br>
+                            <strong>Valor Detallado de la finca</strong>
+                        </p>
+                        <hr>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Finca</th>
+                                    <th>Mínimo<br>[ml]</th>
+                                    <th>Promedio<br>[ml]</th>
+                                    <th>Máximo<br>[ml]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for data in lista_precipitacion_finca %}
+                                    <tr>
+                                        {% for item in data %}
+                                        <td>{{ item }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <br>
+    <br>
+    <div>
+        <h3>
+            Registro Histórico
+        </h3>
+        <hr>
+        <div>
+            <img class="grafana_historico" src="{{ url_historico_precipitacion }}" alt="My image" />
+        </div>
+    </div>
+    <br>
+    <br>
+    <div>
+        <h3>
+            Valores Registrados por los nodos en la red
+        </h3>
+        <hr>
+        {% if there_is_data %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Nodo</th>
+                    <th>Mínimo<br>[ml]</th>
+                    <th>Promedio<br>[ml]</th>
+                    <th>Máximo<br>[ml]</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in lista_precipitacion_nodo %}
+                    <tr>
+                        {% for item in data %}
+                        <td>{{ item }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="center">
+            No hay datos de nodos para el tiempo seleccionado
+        </div>
+        {% endif %}
+    <br>
+    <div class="banner bg-success center">
+        <br>
+        <h2>
+            Datos reportados de la humedad en la finca {{ finca }}
+        </h2>
+        <br>
+    </div>
+    <br>
+    <div>
+        <h3>
+            Valores Registrados
+        </h3>
+        <hr>
+        <div class="row columna_5">
+            <div class="col columna_x">
+                <div class="row">
+                    <div class="col-4 columna_1 center columna_2" id="cultivo_imagen">
+                        <p>
+                            <br>
+                            <strong>Valor Actual</strong>
+                        </p>
+                        <hr>
+                        <img class="grafana_inicio" src="{{ url_inicio_humedad }}" alt="My image" />
+                    </div>
+                    <div class="col columna_1 center">
+                        <p>
+                            <br>
+                            <strong>Valor Detallado de la finca</strong>
+                        </p>
+                        <hr>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Finca</th>
+                                    <th>Mínimo<br>[%H]</th>
+                                    <th>Promedio<br>[%H]</th>
+                                    <th>Máximo<br>[%H]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for data in lista_humedad_finca %}
+                                    <tr>
+                                        {% for item in data %}
+                                        <td>{{ item }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <br>
+    <br>
+    <div>
+        <h3>
+            Registro Histórico
+        </h3>
+        <hr>
+        <div>
+            <img class="grafana_historico" src="{{ url_historico_humedad }}" alt="My image" />
+        </div>
+    </div>
+    <br>
+    <br>
+    <div>
+        <h3>
+            Valores Registrados por los nodos en la red
+        </h3>
+        <hr>
+        {% if there_is_data %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Nodo</th>
+                    <th>Mínimo<br>[%H]</th>
+                    <th>Promedio<br>[%H]</th>
+                    <th>Máximo<br>[%H]</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in lista_humedad_nodo %}
+                    <tr>
+                        {% for item in data %}
+                        <td>{{ item }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="center">
+            No hay datos de nodos para el tiempo seleccionado
+        </div>
+        {% endif %}
+    </div>
+    <br>
+    <div class="banner bg-success center">
+        <br>
+        <h2>
+            Datos reportados de la radiación solar en la finca {{ finca }}
+        </h2>
+        <br>
+    </div>
+    <br>
+    <div>
+        <h3>
+            Valores Registrados
+        </h3>
+        <hr>
+        <div class="row columna_5">
+            <div class="col columna_x">
+                <div class="row">
+                    <div class="col-4 columna_1 center columna_2" id="cultivo_imagen">
+                        <p>
+                            <br>
+                            <strong>Valor Actual</strong>
+                        </p>
+                        <hr>
+                        <img class="grafana_inicio" src="{{ url_inicio_radiacion }}" alt="My image" />
+                    </div>
+                    <div class="col columna_1 center">
+                        <p>
+                            <br>
+                            <strong>Valor Detallado de la finca</strong>
+                        </p>
+                        <hr>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Finca</th>
+                                    <th>Mínimo<br>[lux]</th>
+                                    <th>Promedio<br>[lux]</th>
+                                    <th>Máximo<br>[lux]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for data in lista_radiacion_finca %}
+                                    <tr>
+                                        {% for item in data %}
+                                        <td>{{ item }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <br>
+    <br>
+    <div>
+        <h3>
+            Registro Histórico
+        </h3>
+        <hr>
+        <div>
+            <img class="grafana_historico" src="{{ url_historico_radiacion }}" alt="My image" />
+        </div>
+    </div>
+    <br>
+    <br>
+    <div>
+        <h3>
+            Valores Registrados por los nodos en la red
+        </h3>
+        <hr>
+        {% if there_is_data %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Nodo</th>
+                    <th>Mínimo<br>[lux]</th>
+                    <th>Promedio<br>[lux]</th>
+                    <th>Máximo<br>[lux]</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in lista_radiacion_nodo %}
+                    <tr>
+                        {% for item in data %}
+                        <td>{{ item }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="center">
+            No hay datos de nodos para el tiempo seleccionado
+        </div>
+        {% endif %}
+    </div>
+    
+    
+
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

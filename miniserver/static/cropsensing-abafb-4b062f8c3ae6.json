@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "cropsensing-abafb",
+  "private_key_id": "4b062f8c3ae601cb129785b0a58100fc7860c8d8",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDfkq6x+9frmhLx\n6b4HpNuf0hm6v9UjVu/lghciKi4bcBu+1XdE5DNy32AWafVRYpG6N/uIHzz2eMD0\nmArsij/Sjt4x0cm4MGaX5fiEp+O8XNhWu6hT4+ujEWCAk+VyfI0GhATFyn0ejY0R\nr44rRm9Su5DVZyVTVfqNl8ZdFcPOKLJKN+edPA+MJQNsplkqHJfZ1TloUPEHouuo\neqaggko+TW9ahnlc8Sdp2xRW0Uby7+CIELswPYGP4QXmXOPtYVowuhB9giGatJKp\n4iu2o0DA3m7mCo75HqJ5sLx0Hmb46Gt3HOyLXhq65u0BTFPBb5mxdY6J48XJrvE6\nLCo/+L1nAgMBAAECggEAa06sganmm2MCp9DwUBvs+/ssNUnAw6sFDsvPTasgITRA\nZOpxSgQbu42CQY/O2qasWkxncpDHwmb3+g4F5D2A34+KDzBpmPnGLC8JhqZMdMq9\nXXfJlaZGIakEAAK8dKRaTd/MqKCFSEZZiL0RyCyQ3w0+uWa98A9K6G4KHACH0Ckr\nVsj5YzaEcfrldzcvYRw8mu74ta6Vc7zO7vBg2HtSq4ryd/FRh1X9ycNkNTg9kj7L\nOv8fY0jDH3toNtcSkdZpwg2IYCF/dtkX0stNGAD4PecpDFIQrEyI4lITgmj+PwW2\nWKub8jroodkg5kcW0xMqZEuZu2Y2guPg8T+boPuIbQKBgQD8o2SvckQL33+d6ZUf\nk0sfokVE7yOPmaqZxUY5vz1rmxcsPEEq/G6aIEHytV1BwWqR8TgvIx2FqSMnR3xX\nwxnGGBbqHpCiq0tLUDOYXG4YyBXNzYLCxNBcQhVRqn96F7wcu2Ivud2Vdhp0BR7r\nXTmK+0fN/+zl8jyZEOFBayOmZQKBgQDijEdkCGGLdPOgzMa6hUdj7z9KDFjb/QjE\nL7hiaCiuSbVDWeDyW6Wl6ZdTKiXGSYOaKCCKgGvsxy4u4Vupwu/zYLahQrdPGj9n\novfLWteIep0Wu9Dipr9VI+qW9IoAADWipFsohjr7ga9FC8l9pdgSC272IohoTYAT\nSt0KftcB2wKBgQCQeEtqfPhmpb9PqTSKoutRwrTD79CxHJnPZ116Rl80OrMsq6RE\nlagV4R51Ubtrj9SGcp/DbNxEA+3DV4DGmx4RBtOLvEDPlQ7wmYN3vFuFNl4pmz0M\nbgoMyAly8wIE6q+66nkCe9I31xrXf9onk98FGB7+sTxiXnzCt0Fo7ICtdQKBgAh4\nGgshTRQ7kQgH374FUX/o58LK51+B/BvpdMko/6xUURRtfb1Rs8WaD/Ap+TOKeAMB\nUQYceuxlHdLe1eBoyzOb//fTWKr6XjhvnTfa84fEna7F4q82cJysNQ7joW0SlO65\nmjbPndDdLkI0iJnL42H5T3KgI91SWGFgQRctWrhVAoGAFnPqAnHOZIoKnV6hTLFK\nwKBjlZ2b4i2CpRG4c3ocOdO6KuGE/vu8NN0LiHtU6xIKrG1Y4WlWyDUDGfaRBTJ0\niyBnTPenBm7cm0lHMtAxub4M/cxdRvepFq9zdgyKiD80/Bc3kjPuIVhxdgwshnr4\nVNy+/Nwc+5UMAnScJ9rKgz4=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-xf4hl@cropsensing-abafb.iam.gserviceaccount.com",
+  "client_id": "109178420986540515449",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-xf4hl%40cropsensing-abafb.iam.gserviceaccount.com"
+}

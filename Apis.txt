@@ -1,0 +1,27 @@
+get cultivos		/info/cultivo/cultivos o /info/cultivo/getCultivos
+get cultivo		/info/cultivo/cultivo/<pk>
+post cultivo		/info/cultivo/cultivo/crear		Si se quiere crear un cultivo con imagen, validar desde front que la imagen sea obligatoria se debe mandar como form-data (multipart)
+put cultivo		/info/cultivo/cultivo/<pk> 		Si se quiere actualizar la imagen, se debe mandar como form-data (multipart), la imagen se SOBREESCRIBE
+delete cultivo		/info/cultivo/cultivo/<pk>
+
+get fincas		/info/finca/fincas_new
+get finca		/info/finca/finca_new/<pk>
+post finca		/info/finca/finca_new/crear		Si se quiere crear una finca con imagen, validar desde front que la imagen sea obligatoria se debe mandar como form-data (multipart)
+put finca		/info/finca/finca_new/<pk>		Si se quiere actualizar la imagen, se debe mandar como form-data (multipart), la imagen se SOBREESCRIBE
+delete finca		/info/finca/finca_new/<pk>
+
+*Los PUT se deben actualizar por separado, si se quiere actualizar la imagen, solo se actualiza con un form-data, lo demás, se lo actualiza por ReqBody*
+
+
+				--Obtener cultivos x usuario--				--Obtener fincas x usuario--			--Obtener fincas y que cultivan x usuario--
+get listaCultivo x Usuario 	/info/cultivo/cultivos_user_new?user_tag=Prueba || /info/cultivo/fincas_user_new?user_tag=Prueba || /info/cultivo/fincas_cultivo_user_new?user_tag=Prueba
+
+get listaCultivo		/info/cultivo/finca_cultivo_user/<pk>
+post listaCultivo		/info/cultivo/fincas_cultivo_user_crear
+put listaCultivo		/info/cultivo/finca_cultivo_user/<pk>
+delete listaCultivo		/info/cultivo/finca_cultivo_user/<pk>
+
+notificaciones
+
+crop
+estate/farm/

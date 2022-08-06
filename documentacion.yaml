@@ -1,0 +1,756 @@
+openapi: 3.0.1
+info:
+  title: Crop Sensing
+  description: Apis
+  version: 1.0.0
+servers:
+- url: http://127.0.0.1:8000
+  description: Local
+tags:
+- name: Crop
+  description: Representan los Cultivos (Crop)
+- name: Farm
+  description: Representan las Fincas (Farm)
+- name: Farm-Crop-User
+  description: Representa la relación entre Cultivos - Fincas y Usuarios (Tabla ListaCultivos)
+paths:
+  /info/crop/crops:
+    get:
+      tags:
+      - Crop
+      summary: Obtener Cultivos
+      description: Api para obtener todos los cultivos (umbrales) registrados en la tabla Cultivos. Devuelve toda la información 
+      responses:
+        200:
+          description: Operación exitosa.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/objCrop'
+                   
+        400:
+          description: Cualquier error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /info/crop/crop/create:
+    post:
+      tags:
+      - Crop
+      summary: Crear un Cultivo
+      description: Api para crear un registro en la tabla Cultivos. Si se quiere crear un cultivo con imagen, validar desde front que la imagen sea obligatoria, se debe mandar como form-data (multipart) 
+      requestBody:
+        description: "Se piden como obligatorios en el campo <strong>imagen</strong>. Se envian todos los campos"
+        required: true
+        content:
+          'multipart/form-data':
+            schema:
+              type: object
+              properties:
+                dataObject:
+                  format: application/json
+                  type: object
+                  properties:
+                    nombre:
+                      type: string
+                      example: papa
+                    minimo_temperatura:
+                      type: integer
+                      format: number
+                      example: 1.1
+                    maximo_temperatura:
+                      type: integer
+                      format: number
+                      example: 1.1
+                    minimo_humedad:
+                      type: integer
+                      format: number
+                      example: 1.1
+                    maximo_humedad:
+                      type: integer
+                      format: number
+                      example: 1.1
+                    minimo_precipitacion:
+                      type: integer
+                      format: number
+                      example: 1.1
+                    maximo_precipitacion:
+                      type: integer
+                      format: number
+                      example: 1.1
+                    minimo_radiacion:
+                      type: integer
+                      format: number
+                      example: 1.1
+                    maximo_radiacion:
+                      type: integer
+                      format: number
+                      example: 1.1
+      responses:
+        200:
+          description: Operación exitosa.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/objCrop'
+        400:
+          description: Cualquier error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /info/crop/crop/{id}:
+    get:
+      tags:
+      - Crop
+      summary: Obtener un Cultivo por ID
+      description: Api para obtener un cultivo (umbral) por medio de un pk registrados en la tabla Cultivos. Devuelve toda la información del registro
+      parameters:
+      - name: id
+        in: path
+        description: Identificador del registro
+        required: true
+        schema:
+          type: number
+      responses:
+        200:
+          description: Operación exitosa.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/objCrop'
+        400:
+          description: Cualquier error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        
+        404:
+          description: No existe el cultivo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cultivoNoExiste'
+
+    put:
+      tags:
+      - Crop
+      summary: Actualizar un Cultivo por ID
+      description: Api para actualizar un cultivo (umbral) por medio de un pk. Se especifica que esta api se utilice para actualizar la información y la imagen por separado. La imagen se envia como form-data(multipar) y la información se puede enviar únicamente como Request Body 
+      parameters:
+      - name: id
+        in: path
+        description: Identificador del registro
+        required: true
+        schema:
+          type: number
+      requestBody:
+        description: "La actualización se debe realizar por separado la imagen y los demás campos.
+                      <br/>La imagen se actualiza desde un multipart, los demás campos desde un objeto."
+        required: true
+        content:
+          'multipart/form-data':
+            schema:
+              type: object
+              properties:
+                dataMultipart:
+                  format: binary
+                  type: string
+
+                dataObject:
+                  format: application/json
+                  type: object
+                  properties:
+                    nombre:
+                      type: string
+                      example: papa
+                    minimo_temperatura:
+                      type: integer
+                      format: number
+                      example: 1.1
+                    maximo_temperatura:
+                      type: integer
+                      format: number
+                      example: 1.1
+                    minimo_humedad:
+                      type: integer
+                      format: number
+                      example: 1.1
+                    maximo_humedad:
+                      type: integer
+                      format: number
+                      example: 1.1
+                    minimo_precipitacion:
+                      type: integer
+                      format: number
+                      example: 1.1
+                    maximo_precipitacion:
+                      type: integer
+                      format: number
+                      example: 1.1
+                    minimo_radiacion:
+                      type: integer
+                      format: number
+                      example: 1.1
+                    maximo_radiacion:
+                      type: integer
+                      format: number
+                      example: 1.1
+      
+      responses:
+        200:
+          description: Operación exitosa.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/objCrop'
+        400:
+          description: Cualquier error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+      - Crop
+      summary: Eliminar un Cultivo por ID
+      description: Api para eliminar un registro por medio del ID 
+      parameters:
+      - name: id
+        in: path
+        description: Identificador del registro
+        required: true
+        schema:
+          type: number
+      responses:
+        200:
+          description: Operación exitosa.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    format: number
+                    example: Cultivo eliminado con éxito
+        400:
+          description: Cualquier error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  /info/farm/farms_new:
+    get:
+      tags:
+      - Farm
+      summary: Obtener Fincas
+      description: Api para obtener todas las Fincas registradas en la tabla Finca. Devuelve toda la información 
+      responses:
+        200:
+          description: Operación exitosa.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/objFarm'
+                  
+        400:
+          description: Cualquier error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /info/farm/farm_new/create:
+    post:
+      tags:
+      - Farm
+      summary: Crear una Finca
+      description: Api para crear un registro en la tabla Finca. Si se quiere crear una finca con imagen, validar desde front que la imagen sea obligatoria, se debe mandar como form-data (multipart) 
+      requestBody:
+        description: "Se piden como obligatorios en el campo <strong>imagen</strong>. Se envian todos los campos"
+        required: true
+        content:
+          'multipart/form-data':
+            schema:
+              type: object
+              properties:
+                data:
+                  format: binary
+                  type: string
+      responses:
+        200:
+          description: Operación exitosa.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/objFarm'
+        400:
+          description: Cualquier error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /info/farm/farm_new/{id}:
+    get:
+      tags:
+      - Farm
+      summary: Obtener una Finca por ID
+      description: Api para obtener todas las fincas registradas en la tabla Finca. Devuelve toda la información 
+      parameters:
+      - name: id
+        in: path
+        description: Identificador del registro
+        required: true
+        schema:
+          type: number
+      responses:
+        200:
+          description: Operación exitosa.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/objFarm'
+        400:
+          description: Cualquier error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        
+        404:
+          description: No existe la finca
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fincaNoExiste'
+
+    put:
+      tags:
+      - Farm
+      summary: Actualizar una Finca por ID
+      description: Api para actualizar una finca por medio de un ID. Se especifica que esta api se utilice para actualizar la información y la imagen por separado. La imagen se envia como form-data(multipar) y la información se puede enviar únicamente como Request Body
+      parameters:
+      - name: id
+        in: path
+        description: Identificador del registro
+        required: true
+        schema:
+          type: number
+      requestBody:
+        description: "La actualización se debe realizar por separado la imagen y los demás campos.
+                      <br/>La imagen se actualiza desde un multipart, los demás campos desde un objeto."
+        required: true
+        content:
+          'multipart/form-data':
+            schema:
+              type: object
+              properties:
+                dataMultipart:
+                  format: binary
+                  type: string
+
+                dataObject:
+                    format: application/json
+                    type: object
+                    properties:
+                      nombre:
+                        type: string
+                        example: ESPOL
+                      imagen:
+                        type: string
+                        example: /images/finca/espol.jpeg
+                      user:
+                        type: integer
+                        format: number
+                        example: 1
+        
+      responses:
+        200:
+          description: Operación exitosa.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/objFarm'
+        400:
+          description: Cualquier error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+      - Farm
+      summary: Eliminar una Finca por ID
+      description: Api para eliminar un registro por medio del ID 
+      parameters:
+      - name: id
+        in: path
+        description: Identificador del registro
+        required: true
+        schema:
+          type: number
+      responses:
+        200:
+          description: Operación exitosa.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    format: number
+                    example: Finca eliminada con éxito
+        400:
+          description: Cualquier error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /info/crop/farms_crops_users:
+    get:
+      tags:
+      - Farm-Crop-User
+      summary: Obtener la data de la relación en la tabla ListaCultivos 
+      description: Api para obtener la data de los registros que existen en la tabla ListaCultivos
+      parameters:
+      - name: user_tag
+        in: query
+        description: Campo user_tag (Identificador del usuario). Si se envia, se traen los registros del usuario. En caso de no enviarlo, se traen todos los registros de la tabla
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Operación exitosa.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties: 
+                    id:
+                      type: integer
+                      format: number
+                      example: 1
+                    cultivo: 
+                      $ref: '#/components/schemas/objCrop'
+                    finca: 
+                      $ref: '#/components/schemas/objFarm'
+                    user: 
+                      $ref: '#/components/schemas/objUser'
+                   
+        400:
+          description: Cualquier error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /info/crop/farm_crop_user_create:
+    post:
+      tags:
+      - Farm-Crop-User
+      summary: Crear una relación entre Finca-Cultivo-Usuario
+      description: Api para crear un registro en la tabla ListaCultivos.
+      requestBody:
+        description: "Se piden como obligatorios todos los campos"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_user:
+                  type: integer
+                  format: number
+                  example: 1
+                id_finca:
+                  type: integer
+                  format: number
+                  example: 1
+                id_cultivo:
+                  type: integer
+                  format: number
+                  example: 1
+      responses:
+        200:
+          description: Operación exitosa.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                    id:
+                      type: integer
+                      format: number
+                      example: 1
+                    cultivo: 
+                      $ref: '#/components/schemas/objCrop'
+                    finca: 
+                      $ref: '#/components/schemas/objFarm'
+                    user: 
+                      $ref: '#/components/schemas/objUser'
+        400:
+          description: Cualquier error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /info/crop/farm_crop_user/{id}:
+    get:
+      tags:
+      - Farm-Crop-User
+      summary: Obtener un registro de la tabla ListaCultivos
+      description: Api para obtener un registro de la tabla ListaCultivos
+      parameters:
+      - name: id
+        in: path
+        description: Identificador del registro
+        required: true
+        schema:
+          type: number
+      responses:
+        200:
+          description: Operación exitosa.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  id:
+                    type: integer
+                    format: number
+                    example: 1
+                  cultivo: 
+                    $ref: '#/components/schemas/objCrop'
+                  finca: 
+                    $ref: '#/components/schemas/objFarm'
+                  user: 
+                    $ref: '#/components/schemas/objUser'
+        400:
+          description: Cualquier error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        
+        404:
+          description: No existe la finca
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UCFNoExiste'
+
+    put:
+      tags:
+      - Farm-Crop-User
+      summary: Actualizar un registro de la tabla ListaCultivos
+      description: Api para actualizar un registro de la tabla ListaCultivos. Devuelve toda la información
+      parameters:
+      - name: id
+        in: path
+        description: Identificador del registro
+        required: true
+        schema:
+          type: number
+      requestBody:
+        description: "Se puede actualizar cualquiera de los tres id"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_user:
+                  type: integer
+                  format: number
+                  example: 1
+                id_finca:
+                  type: integer
+                  format: number
+                  example: 1
+                id_cultivo:
+                  type: integer
+                  format: number
+                  example: 1
+        
+      responses:
+        200:
+          description: Operación exitosa.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  id:
+                    type: integer
+                    format: number
+                    example: 1
+                  cultivo: 
+                    $ref: '#/components/schemas/objCrop'
+                  finca: 
+                    $ref: '#/components/schemas/objFarm'
+                  user: 
+                    $ref: '#/components/schemas/objUser'
+        400:
+          description: Cualquier error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+      - Farm-Crop-User
+      summary: Eliminar un registro de la tabla ListaCultivos
+      description: Api para eliminar un registro de la tabla ListaCultivos. Devuelve toda la información
+      parameters:
+      - name: id
+        in: path
+        description: Identificador del registro
+        required: true
+        schema:
+          type: number
+      responses:
+        200:
+          description: Operación exitosa.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    format: number
+                    example: Relación Usuario, Cultivo y Finca eliminada con éxito
+        400:
+          description: Cualquier error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+
+    cultivoNoExiste:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Cultivo no existe'
+
+    fincaNoExiste:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Finca no existe'
+  
+
+    UCFNoExiste:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'El objeto que relaciona al Usuario, Cultivo y Finca no existe'
+
+    Error:
+      type: object
+      properties:
+        {}
+
+    objCrop:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: number
+          example: 1
+        nombre:
+          type: string
+          example: papa
+        imagen:
+          type: string
+          example: /images/cultivo/papa.jpeg
+        minimo_temperatura:
+          type: integer
+          format: number
+          example: 1.1
+        maximo_temperatura:
+          type: integer
+          format: number
+          example: 1.1
+        minimo_humedad:
+          type: integer
+          format: number
+          example: 1.1
+        maximo_humedad:
+          type: integer
+          format: number
+          example: 1.1
+        minimo_precipitacion:
+          type: integer
+          format: number
+          example: 1.1
+        maximo_precipitacion:
+          type: integer
+          format: number
+          example: 1.1
+        minimo_radiacion:
+          type: integer
+          format: number
+          example: 1.1
+        maximo_radiacion:
+          type: integer
+          format: number
+          example: 1.1
+
+    objFarm:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: number
+          example: 1
+        nombre:
+          type: string
+          example: ESPOL
+        imagen:
+          type: string
+          example: /images/finca/espol.jpeg
+        user:
+          type: integer
+          format: number
+          example: 1
+
+    objUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: number
+          example: 1
+        user:
+          type: string
+          example: ESPOL
+        user_tag:
+          type: string
+          example: Prueba
