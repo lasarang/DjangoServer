@@ -3,6 +3,8 @@
 LOCAL_URL = 'http://localhost:4000/'
 LOCAL_URL_TEST = 'http://127.0.0.1:8000/'
 
+URL_PROD = 'http://127.0.0.1:8000/'
+
 LOGO = LOCAL_URL + 'static/images/assets/Logo-Crop-Sensing.png'
 FOOTER_1 = LOCAL_URL + 'static/images/assets/footer.png'
 FOOTER_2 = LOCAL_URL + 'static/images/assets/Logo-CIDIS.png'

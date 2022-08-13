@@ -1,10 +1,4 @@
-from django.shortcuts import render
-from django.http import HttpResponse, FileResponse
-from django.template.loader import render_to_string
-from weasyprint import HTML, CSS
-
 import urllib.parse
-
 from . import constantes
 
 def get_url_grafana_by_time(data):

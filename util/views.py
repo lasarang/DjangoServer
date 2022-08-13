@@ -1,45 +1,18 @@
 # -*- coding: utf-8 -*-
 import tempfile
-
-from django.shortcuts import render
-from django.http import HttpResponse, FileResponse
+from django.http import HttpResponse
 from django.template.loader import render_to_string
 from cultivo.models import Cultivo
 from influxdb import influxdbConnector
 from users.models import Usuario
 from weasyprint import HTML
-
-
-from rest_framework import viewsets, permissions
-
-from django.http import JsonResponse
-
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
 from rest_framework import status
 from rest_framework import generics
-
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
-from django.contrib.auth import authenticate, login
-from rest_framework.status import (
-    HTTP_400_BAD_REQUEST,
-    HTTP_404_NOT_FOUND,
-    HTTP_200_OK
-)
-
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
-from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-
-
-import urllib.request
-import urllib.parse
-from datetime import date, datetime
+from rest_framework.permissions import AllowAny
+from datetime import datetime
 from . import constantes, utils
 
 
@@ -71,14 +44,14 @@ def generate_pdf_general(request):
         print(usuario)
         print(cultivo)
 
-        #data = influxdbConnector.get_data_by_finca(constantes.TIEMPOS[tiempo]['start'], constantes.TIEMPOS[tiempo]['stop'], planta, user_tag)
+        data = influxdbConnector.get_data_by_finca(constantes.TIEMPOS[tiempo]['start'], constantes.TIEMPOS[tiempo]['stop'], planta, user_tag)
 
-        data = {
-            'Temperatura: ': '1',
-            'Precipitacion:': '1',
-            'Humedad: ':'1',
-            'Radiación Solar: ':'1',
-        }
+        # data = {
+        #     'Temperatura: ': '1',
+        #     'Precipitacion:': '1',
+        #     'Humedad: ':'1',
+        #     'Radiación Solar: ':'1',
+        # }
 
         contexto = {
             'planta': planta,
@@ -226,8 +199,8 @@ def generate_pdf_detalle_finca(request):
         data['modo'] = "historico"
         url_historico_radiacion = utils.get_url_grafana_by_time(data)
 
-        #fincas = influxdbConnector.get_data_by_finca_detalle_2(constantes.TIEMPOS[tiempo]['start'], constantes.TIEMPOS[tiempo]['stop'], planta, finca, user_tag)
-        #nodos = influxdbConnector.get_data_by_nodo(constantes.TIEMPOS[tiempo]['start'], constantes.TIEMPOS[tiempo]['stop'], finca, planta, user_tag)
+        fincas = influxdbConnector.get_data_by_finca_detalle_2(constantes.TIEMPOS[tiempo]['start'], constantes.TIEMPOS[tiempo]['stop'], planta, finca, user_tag)
+        nodos = influxdbConnector.get_data_by_nodo(constantes.TIEMPOS[tiempo]['start'], constantes.TIEMPOS[tiempo]['stop'], finca, planta, user_tag)
 
         empty_finca = [[finca, " - ", " - ", " - "]]
 
@@ -243,19 +216,19 @@ def generate_pdf_detalle_finca(request):
 
         there_is_data = True
 
-        fincas = {
-            'Temperatura: ': '1',
-            'Precipitacion:': '1',
-            'Humedad: ':'1',
-            'Radiación Solar: ':'1',
-        }
+        # fincas = {
+        #     'Temperatura: ': '1',
+        #     'Precipitacion:': '1',
+        #     'Humedad: ':'1',
+        #     'Radiación Solar: ':'1',
+        # }
 
-        nodos = {
-            'Temperatura: ': '1',
-            'Precipitacion:': '1',
-            'Humedad: ':'1',
-            'Radiación Solar: ':'1',
-        }
+        # nodos = {
+        #     'Temperatura: ': '1',
+        #     'Precipitacion:': '1',
+        #     'Humedad: ':'1',
+        #     'Radiación Solar: ':'1',
+        # }
 
         if fincas is not None and fincas:
             lista_temperatura = fincas['Temperatura: ']

@@ -1,6 +1,5 @@
 from finca.models import Finca
 from django.db import models
-from django.db.models import constraints
 from django.forms import ModelForm
 
 import os

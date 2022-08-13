@@ -1,16 +1,9 @@
-from cultivo.serializers import CultivoSerializer
-from cultivo.models import Cultivo
-from django.shortcuts import render
 from rest_framework import viewsets, permissions
-
-from django.http import JsonResponse
-
-from notificaciones.models import NotificacionRespaldo
 from notificaciones.serializers import NotificacionRespaldoSerializer
 
 from .models import Usuario
 
-from .serializers import UserSerializer, UsuarioNewSerializer
+from .serializers import UsuarioNewSerializer
 from .serializers import UsuarioSerializer
 
 from . import decrypt
@@ -23,10 +16,9 @@ from rest_framework import generics
 
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import authenticate, login
 from rest_framework.status import (
-    HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
     HTTP_200_OK
 )
@@ -152,26 +144,29 @@ class NotificationSingleFCM(APIView):
     permission_classes = (AllowAny,)
     def post(self, request, *args, **kwargs):
 
-        #INFORMACIÓN PROVENIENTE DESDE INFLUX
-        title = "Prueba Django"
-        body = "Prueba Django Body 4-8"
-        pk=2
+        #Información proveniente desde Influx
+        print(request.data)
+        dataNotificacionInflux = request.data
+        dataNotificacionInfluxTitle = dataNotificacionInflux['_message'].split(",")[0]
+        dataNotificacionInfluxBody = dataNotificacionInflux['_message'].split(",")[1]
+        dataNotificacionInfluxUserTag = dataNotificacionInflux['usuario']
 
         try:
-            data = Usuario.objects.get(pk=pk)
+            data = Usuario.objects.get(user_tag=dataNotificacionInfluxUserTag)
         except Usuario.DoesNotExist:
             return Response({'message': 'Usuario no existe'},status=status.HTTP_404_NOT_FOUND)
 
-        device = FCMDevice.objects.get(user = pk)
-        #print(device.send_message(Message(notification=Notification(title=title, body=body))))
-        device.send_message(Message(notification=Notification(title=title, body=body)))
+        #Obtener id de User y enviar notificación a usuario
+        device = FCMDevice.objects.get(user = data.user.id)
+        device.send_message(Message(notification=Notification(title=dataNotificacionInfluxTitle, body=dataNotificacionInfluxBody)))
         device.is_active=True
         device.save()
 
+        #Guardar data en tabla de NotificacionesRespaldo
         requestData = {}
         requestData["user_tag"] = data.user_tag
-        requestData["titulo"] = title
-        requestData["cuerpo"] = body
+        requestData["titulo"] = dataNotificacionInfluxTitle
+        requestData["cuerpo"] = dataNotificacionInfluxBody
         requestData["fue_revisada"] = "N"
 
         serializerNotificacion = NotificacionRespaldoSerializer(data=requestData)

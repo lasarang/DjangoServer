@@ -1,37 +1,15 @@
-from django.shortcuts import render
 from rest_framework import viewsets, permissions
-
-from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
-
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
-from django.contrib.auth import authenticate, login
-from rest_framework.status import (
-    HTTP_400_BAD_REQUEST,
-    HTTP_404_NOT_FOUND,
-    HTTP_200_OK
-)
-
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
-from django.contrib.auth.hashers import make_password
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-
-import json
+from rest_framework.permissions import AllowAny
 from users.models import Usuario
 from .models import Finca
 from .serializers import FincaSerializer
-
 import base64
 from django.core.files.base import ContentFile
-
-# generate random integer values
-from random import seed
 from random import randint
 
 

@@ -1,6 +1,4 @@
-from cultivo.models import Cultivo
 from django.db import models
-from django.utils.dateparse import parse_date
 from django.forms import ModelForm
 from django.contrib.auth.models import User
 

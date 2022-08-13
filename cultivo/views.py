@@ -1,35 +1,20 @@
 from finca.models import Finca
 from finca.serializers import FincaSerializer
 from users.models import Usuario
-from django.shortcuts import render
 from rest_framework import viewsets, permissions
-
 from .models import Cultivo, ListaCultivo
 from .serializers import CultivoSerializer, ListaCultivoSerializer, ListaCultivoNewSerializer
-
-from django.http import JsonResponse
 from rest_framework.response import Response
-
 from rest_framework import status
 from rest_framework import generics
-
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
-from rest_framework.status import (
-    HTTP_400_BAD_REQUEST,
-    HTTP_404_NOT_FOUND,
-    HTTP_200_OK
-)
-
+from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
-
 import base64
 from django.core.files.base import ContentFile
 
-
 # generate random integer values
-from random import seed
 from random import randint
 
 class CultivoViewSet(viewsets.ModelViewSet):

@@ -1,8 +1,6 @@
-from django.shortcuts import render
-
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
+from rest_framework.permissions import AllowAny
 from rest_framework import status
 from notificaciones.models import NotificacionRespaldo
 from notificaciones.serializers import NotificacionRespaldoSerializer
@@ -11,19 +9,8 @@ from rest_framework.response import Response
 
 from datetime import datetime
 
-# Create your views here.
-
-LISTA_DIAS = (
-   (0, 'LUNES'),
-   (1, 'MARTES'),
-   (2, 'MIÉRCOLES'),
-   (3, 'JUEVES'),
-   (4, 'VIERNES'),
-   (5, 'SÁBADO'),
-   (6, 'DOMINGO'),
-)
-
 LISTA_DIAS_DICT = {0:'LUNES',1:'MARTES',2:'MIÉRCOLES',3:'JUEVES',4:'VIERNES',5:'SÁBADO',6:'DOMINGO'}
+# Create your views here.
 
 # Obtener las notificaciones por user_tag y si fueron o no revisadas
 @api_view(['GET'])
