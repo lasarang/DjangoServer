@@ -2,16 +2,10 @@ from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
 from influxdb_client.client.exceptions import InfluxDBError
 # You can generate a Token from the "Tokens Tab" in the UI
-token = "wOCjQgmTsWfpiOdA2PHWnBNmY6RQSQFNL7O5eKlhEaaS5jQXfOej0_Cy_nRQRSlyAPa2otxQypMgynLr6cdWYg=="
-# token = "BnHJ5_uOagFae6QcjRY-u3IDtCg_l6maAT_I3y6swwnlb5GixnXCZrzCHtoVv8oM036WsYbqUQ7gw8syDqogJw=="
-#org = "CIDIS-ESPOL"
+token="bJdAFfHIRJOehHexyebAYtZ8Q2ED8dibdco_DiMnDIXHC8L8GHIwUp6FAXI-LekxTTQobg_1zz2VLasfqsg2XA=="
 org = "ESPOL"
 
-
-# client = InfluxDBClient(url="http://172.25.128.1:8086", token=token)
-client = InfluxDBClient(url="http://localhost:8086", token=token)
-#client = InfluxDBClient(url="http://localhost:9002", token=token)
-#client = InfluxDBClient(url="https://basetsdb-cidis.ngrok.io/", token=token)
+client = InfluxDBClient(url="https://basetsdb-cidis.ngrok.io/", token=token)
 
 
 def get_cultivos(bucket):

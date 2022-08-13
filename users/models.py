@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 
 
 TIPO_DE_USUARIO = (
-    (1, 'AGRICULTOR'),
-    (2, 'ADMIN')
+    (1, 'ADMIN'),
+    (2, 'AGRICULTOR')
 )
 
 # Create your models here.
