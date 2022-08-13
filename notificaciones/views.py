@@ -37,6 +37,7 @@ def notificaciones(request):
          data_rsp['dia'] = LISTA_DIAS_DICT[data_rsp['dia']]
          
          if data_rsp['fecha'] is not None:
+            data_rsp['fecha'] = data_rsp['fecha'].split(".")[0]
             data_rsp['fecha'] = datetime.strptime(data_rsp['fecha'], "%Y-%m-%dT%H:%M:%S").strftime("%Y-%m-%d %H:%M:%S")
          
          responseFinal.append(data_rsp)
