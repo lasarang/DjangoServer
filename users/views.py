@@ -147,8 +147,8 @@ class NotificationSingleFCM(APIView):
         #Información proveniente desde Influx
         print(request.data)
         dataNotificacionInflux = request.data
-        dataNotificacionInfluxTitle = dataNotificacionInflux['_message'].split(",")[0]
-        dataNotificacionInfluxBody = dataNotificacionInflux['_message'].split(",")[1]
+        dataNotificacionInfluxTitle = dataNotificacionInflux['_message'].split(";")[0]
+        dataNotificacionInfluxBody = dataNotificacionInflux['_message'].split(";")[1]
         dataNotificacionInfluxUserTag = dataNotificacionInflux['usuario']
 
         try:
