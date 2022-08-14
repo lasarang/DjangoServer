@@ -10,39 +10,42 @@ FOOTER_1 = LOCAL_URL + 'static/images/assets/footer.png'
 FOOTER_2 = LOCAL_URL + 'static/images/assets/Logo-CIDIS.png'
 
 #Grafana path
+#GRAFANA_URL = 'https://graficas-cidis.ngrok.io/render/d-solo/1dyTkHZnk/plantilla?orgId=1&refresh=5s&panelId='
+
 GRAFANA_URL = 'http://localhost:3000/render/d-solo/1dyTkHZnk/plantilla?orgId=1&refresh=5s&panelId='
+
 
 IDS = {
     "temperatura": {
-            "inicio" : "8&theme=dark",
-            "historico": "14&theme=dark",
+            "inicio" : "8&theme=light",
+            "historico": "14&theme=light",
             "tabla": "44",
-            "sensor_inicio": "54&theme=dark",
-            "sensor_historico": "55&theme=dark",
+            "sensor_inicio": "54&theme=light",
+            "sensor_historico": "55&theme=light",
             "title": "Temperatura",
         },
     "precipitacion": {
-            "inicio": "10&theme=dark",
-            "historico": "16&theme=dark",
+            "inicio": "10&theme=light",
+            "historico": "16&theme=light",
             "tabla": "46",
-            "sensor_inicio": "56&theme=dark",
-            "sensor_historico": "57&theme=dark",
+            "sensor_inicio": "56&theme=light",
+            "sensor_historico": "57&theme=light",
             "title": "Nivel de Lluvia",
         },
     "humedad": {
-            "inicio": "12&theme=dark",
-            "historico": "18&theme=dark",
+            "inicio": "12&theme=light",
+            "historico": "18&theme=light",
             "tabla": "48",
-            "sensor_inicio": "58&theme=dark",
-            "sensor_historico": "59&theme=dark",
+            "sensor_inicio": "58&theme=light",
+            "sensor_historico": "59&theme=light",
             "title": "Humedad",
         },
     "radiacion": {
-            "inicio": "22&theme=dark",
-            "historico": "24&theme=dark",
+            "inicio": "22&theme=light",
+            "historico": "24&theme=light",
             "tabla": "50",
-            "sensor_inicio": "52&theme=dark",
-            "sensor_historico": "53&theme=dark",
+            "sensor_inicio": "52&theme=light",
+            "sensor_historico": "53&theme=light",
             "title": "Radiación Solar",
         },
     "mapa": {

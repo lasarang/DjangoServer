@@ -212,6 +212,8 @@ def generate_pdf_detalle_finca(request):
         fincas = influxdbConnector.get_data_by_finca_detalle_2(constantes.TIEMPOS[tiempo]['start'], constantes.TIEMPOS[tiempo]['stop'], planta, finca, user_tag)
         nodos = influxdbConnector.get_data_by_nodo(constantes.TIEMPOS[tiempo]['start'], constantes.TIEMPOS[tiempo]['stop'], finca, planta, user_tag)
 
+        print(fincas)
+        print(nodos)
         empty_finca = [[finca, " - ", " - " , " - "]]
 
         lista_temperatura = []
