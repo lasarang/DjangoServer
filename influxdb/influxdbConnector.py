@@ -1,11 +1,12 @@
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
 from influxdb_client.client.exceptions import InfluxDBError
+import certifi
 # You can generate a Token from the "Tokens Tab" in the UI
 token="bJdAFfHIRJOehHexyebAYtZ8Q2ED8dibdco_DiMnDIXHC8L8GHIwUp6FAXI-LekxTTQobg_1zz2VLasfqsg2XA=="
 org = "ESPOL"
 
-client = InfluxDBClient(url="https://basetsdb-cidis.ngrok.io/", token=token)
+client = InfluxDBClient(url="https://basetsdb-cidis.ngrok.io/", ssl_ca_cert=certifi.where() , token=token)
 
 
 def get_cultivos(bucket):
@@ -83,7 +84,9 @@ def get_data_by_finca(start, stop, planta, bucket):
                         |> keep(columns: ["finca","_measurement","mean","min","max","_time"]) \
                         |> yield()'
 
+        
         result = client.query_api().query(query, org=org)
+        print(result)
         nombres = {
             "temperatura": "Temperatura: ",
             "precipitacion": "Precipitacion:",
