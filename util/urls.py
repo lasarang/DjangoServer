@@ -9,7 +9,7 @@ urlpatterns = [
    path('reporte_detalle_finca', views.generate_pdf_detalle_finca),
    path('reporte_detalle_sensor', views.generate_pdf_detalle_sensor),
 
-   path('general_report', views.generate_pdf_general),
+   path('general_report', views.generate_pdf_general_final),
    path('farm_detail_report', views.generate_pdf_detalle_finca),
    path('sensor_detail_report', views.generate_pdf_detalle_sensor),
 ]

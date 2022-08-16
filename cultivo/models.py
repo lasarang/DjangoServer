@@ -79,6 +79,17 @@ class ListaCultivo(models.Model):
     id_finca = models.ForeignKey(Finca, on_delete=models.CASCADE)
     #esActivo = models.BooleanField(default=True)
     id_user = models.ForeignKey("users.Usuario", on_delete=models.CASCADE)
+    minimo_temperatura = models.FloatField(blank=True,default=0)
+    maximo_temperatura = models.FloatField(blank=True,default=0)
+
+    minimo_humedad = models.FloatField(blank=True,default=0)
+    maximo_humedad = models.FloatField(blank=True,default=0)
+
+    minimo_precipitacion = models.FloatField(blank=True,default=0)
+    maximo_precipitacion = models.FloatField(blank=True,default=0)
+
+    minimo_radiacion = models.FloatField(blank=True,default=0)
+    maximo_radiacion = models.FloatField(blank=True,default=0)
 
     class ListaCultivoForm(ModelForm):
         class Meta:

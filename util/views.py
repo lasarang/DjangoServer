@@ -1,46 +1,22 @@
-# -*- coding: utf-8 -*-
 import tempfile
-
 from django.shortcuts import render
-from django.http import HttpResponse, FileResponse
+from django.http import HttpResponse
 from django.template.loader import render_to_string
-from cultivo.models import Cultivo
+from cultivo.models import Cultivo, ListaCultivo
+from cultivo.serializers import ListaCultivoNewSerializer
 from influxdb import influxdbConnector
 from users.models import Usuario
+from finca.models import Finca
 from weasyprint import HTML
-
-
-from rest_framework import viewsets, permissions
-
-from django.http import JsonResponse
-
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
 from rest_framework import status
 from rest_framework import generics
-
 from rest_framework.decorators import api_view,authentication_classes,permission_classes
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication,TokenAuthentication
-from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
-from django.contrib.auth import authenticate, login
-from rest_framework.status import (
-    HTTP_400_BAD_REQUEST,
-    HTTP_404_NOT_FOUND,
-    HTTP_200_OK
-)
-
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
-from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-
-
-import urllib.request
-import urllib.parse
-from datetime import date, datetime
+from rest_framework.permissions import AllowAny
+from datetime import datetime
 from . import constantes, utils
+from random import randint
 
 
 # Create your views here.
@@ -68,9 +44,6 @@ def generate_pdf_general(request):
         except Cultivo.DoesNotExist:
             return Response({'message': 'Cultivo no existe'},status=status.HTTP_404_NOT_FOUND)
 
-        print(usuario)
-        print(cultivo)
-
         data = influxdbConnector.get_data_by_finca(constantes.TIEMPOS[tiempo]['start'], constantes.TIEMPOS[tiempo]['stop'], planta, user_tag)   
 
         contexto = {
@@ -97,6 +70,131 @@ def generate_pdf_general(request):
         # Creating http response
         response = HttpResponse(content_type='application/pdf;')
         response['Content-Disposition'] = 'inline; filename=list_people.pdf'
+        response['Content-Transfer-Encoding'] = 'binary'
+        with tempfile.NamedTemporaryFile(delete=False) as output:
+            output.write(result)
+            output.flush()
+            output = open(output.name, 'rb')
+            response.write(output.read())
+
+        return response
+
+    msg = {
+        'error': 'Permission Denied!'
+    }
+    return Response(msg, status=status.HTTP_403_FORBIDDEN)
+
+
+#Reporte General Mejorado
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, BasicAuthentication,TokenAuthentication])
+@permission_classes([AllowAny])
+def generate_pdf_general_final(request):
+    if request.user.is_authenticated:
+        user_tag = request.data.get("user_tag")
+        tiempo = request.data.get("tiempo")
+        now = datetime.now()
+        current_time = now.strftime("%d %b %y %H:%M:%S")
+
+        # Model data
+
+        try:
+            usuario = Usuario.objects.get(user_tag=user_tag)
+        except Usuario.DoesNotExist:
+            return Response({'message': 'Usuario no existe'},status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            cultivosXFinca = ListaCultivo.objects.filter(id_user=usuario)
+        except Usuario.DoesNotExist:
+            return Response({'message': 'No existe un cultivo registrado en esta finca'},status=status.HTTP_404_NOT_FOUND)
+
+        medicionesInflux = influxdbConnector.get_data_by_finca_final(constantes.TIEMPOS[tiempo]['start'], constantes.TIEMPOS[tiempo]['stop'], user_tag)   
+
+
+        dataReporteFinal = ListaCultivoNewSerializer(cultivosXFinca, many=True).data
+
+        bodyReporte = []
+
+        for dataXListaCultivo in dataReporteFinal:
+
+            print('Temperatura' in medicionesInflux)
+
+            #Verifica si Influx tiene data de temperatura
+            if 'Temperatura' in medicionesInflux:
+                for medicionInfluxT in medicionesInflux['Temperatura']:
+                    if medicionInfluxT[0] == dataXListaCultivo['finca']['nombre']:
+                        dataXListaCultivo['minimo_temperatura_medido'] = medicionInfluxT[1] +' °C'
+                        dataXListaCultivo['promedio_temperatura_medido'] = medicionInfluxT[2] +' °C'
+                        dataXListaCultivo['maximo_temperatura_medido'] = medicionInfluxT[3] +' °C'
+            else:
+                dataXListaCultivo['minimo_temperatura_medido'] = '-'
+                dataXListaCultivo['promedio_temperatura_medido'] = '-'
+                dataXListaCultivo['maximo_temperatura_medido'] = '-'
+            
+            #Verifica si Influx tiene data de humedad
+            if 'Humedad' in medicionesInflux:
+                for medicionInfluxH in medicionesInflux['Humedad']:
+                    if medicionInfluxH[0] == dataXListaCultivo['finca']['nombre']:
+                        dataXListaCultivo['minimo_humedad_medido'] = medicionInfluxH[1] +' %H'
+                        dataXListaCultivo['promedio_humedad_medido'] = medicionInfluxH[2] +' %H'
+                        dataXListaCultivo['maximo_humedad_medido'] = medicionInfluxH[3] +' %H'
+            else:
+                dataXListaCultivo['minimo_humedad_medido'] = '-'
+                dataXListaCultivo['promedio_humedad_medido'] = '-'
+                dataXListaCultivo['maximo_humedad_medido'] = '-'
+            
+            #Verifica si Influx tiene data de precipitacion
+            if 'Precipitacion' in medicionesInflux:
+                for medicionInfluxP in medicionesInflux['Precipitacion']:
+                    if medicionInfluxP[0] == dataXListaCultivo['finca']['nombre']:
+                        dataXListaCultivo['minimo_precipitacion_medido'] = medicionInfluxP[1] +' ml'
+                        dataXListaCultivo['promedio_precipitacion_medido'] = medicionInfluxP[2] +' ml'
+                        dataXListaCultivo['maximo_precipitacion_medido'] = medicionInfluxP[3] +' ml'
+            else:
+                dataXListaCultivo['minimo_precipitacion_medido'] = '-'
+                dataXListaCultivo['promedio_precipitacion_medido'] = '-'
+                dataXListaCultivo['maximo_precipitacion_medido'] = '-'
+            
+            #Verifica si Influx tiene data de radiacion solar
+            if 'Radiación Solar' in medicionesInflux:
+                for medicionInfluxRS in medicionesInflux['Radiación Solar']:
+                    if medicionInfluxRS[0] == dataXListaCultivo['finca']['nombre']:
+                        dataXListaCultivo['minimo_radiacion_medido'] = medicionInfluxRS[1] +' lux'
+                        dataXListaCultivo['promedio_radiacion_medido'] = medicionInfluxRS[2] +' lux'
+                        dataXListaCultivo['maximo_radiacion_medido'] = medicionInfluxRS[3] +' lux'
+            else:
+                dataXListaCultivo['minimo_radiacion_medido'] = '-'
+                dataXListaCultivo['promedio_radiacion_medido'] = '-'
+                dataXListaCultivo['maximo_radiacion_medido'] = '-'
+            
+            
+            dataXListaCultivo['nombre_cultivo'] = dataXListaCultivo['cultivo']['nombre']
+            dataXListaCultivo['nombre_finca'] = dataXListaCultivo['finca']['nombre']
+            del dataXListaCultivo['cultivo']
+            del dataXListaCultivo['finca']
+            del dataXListaCultivo['user']
+            bodyReporte.append(dict(dataXListaCultivo))
+        
+        contexto = {
+            'user_tag': user_tag,
+            'fecha': current_time,
+            'title': constantes.TIEMPOS[tiempo]['title'],
+            'logo': constantes.LOGO,
+            'bodyReporte': bodyReporte,
+            'usuario': usuario,
+        }
+
+        # Rendered
+        html_string = render_to_string('reportes/reporte_general_final.html', context=contexto)
+        html = HTML(string=html_string)
+
+        result = html.write_pdf()
+
+        # Creating http response
+        reporteCode = str(randint(0, 1000))+""+str(randint(0, 1000))+""+str(randint(0, 1000))
+
+        response = HttpResponse(content_type='application/pdf;')
+        response['Content-Disposition'] = 'inline; filename=reporte_general_'+reporteCode+'.pdf'
         response['Content-Transfer-Encoding'] = 'binary'
         with tempfile.NamedTemporaryFile(delete=False) as output:
             output.write(result)

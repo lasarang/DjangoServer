@@ -7,7 +7,7 @@ from .models import Cultivo, ListaCultivo
 class CultivoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cultivo
-        fields = ('id',
+        fields= ( 'id',
                   'nombre',
                   'imagen',
                   'minimo_temperatura',
@@ -18,17 +18,25 @@ class CultivoSerializer(serializers.ModelSerializer):
                   'maximo_precipitacion',
                   'minimo_radiacion',
                   'maximo_radiacion'
-                 )
+                )
 
 
 class ListaCultivoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ListaCultivo
-        fields = ('id',
+        fields= ( 'id',
                   'id_cultivo',
                   'id_finca',
-                  'id_user'
-                 )
+                  'id_user',
+                  'minimo_temperatura',
+                  'maximo_temperatura',
+                  'minimo_humedad',
+                  'maximo_humedad',
+                  'minimo_precipitacion',
+                  'maximo_precipitacion',
+                  'minimo_radiacion',
+                  'maximo_radiacion',
+                )
 
 
 class ListaCultivoNewSerializer(serializers.ModelSerializer):
@@ -37,8 +45,16 @@ class ListaCultivoNewSerializer(serializers.ModelSerializer):
     user = UsuarioSerializer(read_only=True,source='id_user')
     class Meta:
         model = ListaCultivo
-        fields = ('id',
+        fields= ( 'id',
                   'cultivo',
                   'finca',
-                  'user'
-                 )
+                  'user',
+                  'minimo_temperatura',
+                  'maximo_temperatura',
+                  'minimo_humedad',
+                  'maximo_humedad',
+                  'minimo_precipitacion',
+                  'maximo_precipitacion',
+                  'minimo_radiacion',
+                  'maximo_radiacion',
+                )
