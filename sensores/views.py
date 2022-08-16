@@ -96,6 +96,7 @@ def rapsberry(request, id):
             respuesta = {
                 'id_cultivo': data.cultivo.id,
                 'cultivo': data.cultivo.nombre,
+                'id_finca': data.finca.id,
                 'finca': data.finca.nombre,
                 'date': current_time,
                 'user': data.user.user_tag
