@@ -8,6 +8,7 @@ urlpatterns = [
    path('raspberryAll/<str:user_tag>',views.raspberryAll),
    path('fincas_cultivo/<str:user_tag>/<str:cultivo>',views.fincas_cultivo),
    path('raspberry/<str:id>',views.rapsberry),
+   path('raspberry_umbrales/<str:id>',views.rapsberryUmbrales),
 ]
 router = routers.DefaultRouter()
 router.register('raspberry',views.RaspBerryViewSet,'raspberry')

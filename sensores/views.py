@@ -1,5 +1,6 @@
+from cultivo.serializers import ListaCultivoNewSerializer
 from finca.models import Finca
-from cultivo.models import Cultivo
+from cultivo.models import Cultivo, ListaCultivo
 from users.models import Usuario
 from django.shortcuts import render
 from rest_framework import viewsets, permissions
@@ -157,6 +158,62 @@ def rapsberry(request, id):
                 'message': 'RaspBerry eliminado exitosamente'
             }
             return Response(msg, status=status.HTTP_200_OK)
+        return Response({'message': 'RaspBerry no existe'}, status=status.HTTP_400_BAD_REQUEST)
+
+    else:
+        msg = {
+            'error': 'Permission Denied!'
+        }
+        return Response(msg, status=status.HTTP_403_FORBIDDEN)
+
+
+# Se obtiene data del Raspberry e información de umbrales relacionadas a ese Raspberry
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, BasicAuthentication, TokenAuthentication])
+@permission_classes([AllowAny])
+def rapsberryUmbrales(request, id):
+
+    if(request.method == 'GET' and request.user.is_authenticated):
+        try:
+            raspberry = RaspBerry.objects.get(id=id)
+        except RaspBerry.DoesNotExist:
+            return Response({'message': 'El Raspberry no existe'},status=status.HTTP_404_NOT_FOUND)
+
+        if raspberry is not None:
+            now = datetime.now()
+            current_time = now.strftime("%d %b %y %H:%M:%S")
+
+            dataListaCultivo = ListaCultivo.objects.filter(id_user=raspberry.user.id).filter(id_finca=raspberry.finca.id).filter(id_cultivo=raspberry.cultivo.id)
+            dataSerializadaListaCultivo = ListaCultivoNewSerializer(dataListaCultivo, many=True).data
+
+            dataFinal = {}
+            for data in dataSerializadaListaCultivo:
+                dataFinal['minimo_temperatura'] = data['minimo_temperatura']
+                dataFinal['maximo_temperatura'] = data['maximo_temperatura']
+                dataFinal['minimo_humedad'] = data['minimo_humedad']
+                dataFinal['maximo_humedad'] = data['maximo_humedad']
+                dataFinal['minimo_precipitacion'] = data['minimo_precipitacion']
+                dataFinal['maximo_precipitacion'] = data['maximo_precipitacion']
+                dataFinal['minimo_radiacion'] = data['minimo_radiacion']
+                dataFinal['maximo_radiacion'] = data['maximo_radiacion']
+            
+            respuesta = {
+                'id_cultivo': raspberry.cultivo.id,
+                'cultivo': raspberry.cultivo.nombre,
+                'id_finca': raspberry.finca.id,
+                'finca': raspberry.finca.nombre,
+                'date': current_time,
+                'user': raspberry.user.user_tag,
+                'minimo_temperatura': dataFinal['minimo_temperatura'],
+                'maximo_temperatura': dataFinal['maximo_temperatura'],
+                'minimo_humedad': dataFinal['minimo_humedad'],
+                'maximo_humedad': dataFinal['maximo_humedad'],
+                'minimo_precipitacion': dataFinal['minimo_precipitacion'],
+                'maximo_precipitacion': dataFinal['maximo_precipitacion'],
+                'minimo_radiacion': dataFinal['minimo_radiacion'],
+                'maximo_radiacion': dataFinal['maximo_radiacion']
+            }
+            return Response(respuesta, status=status.HTTP_200_OK)
         return Response({'message': 'RaspBerry no existe'}, status=status.HTTP_400_BAD_REQUEST)
 
     else:
