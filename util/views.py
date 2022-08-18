@@ -96,8 +96,6 @@ def generate_pdf_general_final(request):
         now = datetime.now()
         current_time = now.strftime("%d %b %y %H:%M:%S")
 
-        # Model data
-
         try:
             usuario = Usuario.objects.get(user_tag=user_tag)
         except Usuario.DoesNotExist:
@@ -108,7 +106,7 @@ def generate_pdf_general_final(request):
         except Usuario.DoesNotExist:
             return Response({'message': 'No existe un cultivo registrado en esta finca'},status=status.HTTP_404_NOT_FOUND)
 
-        medicionesInflux = influxdbConnector.get_data_by_finca_final(constantes.TIEMPOS[tiempo]['start'], constantes.TIEMPOS[tiempo]['stop'], user_tag)   
+        medicionesInflux = influxdbConnector.obtenerDataFincaFinal(constantes.TIEMPOS[tiempo]['start'], constantes.TIEMPOS[tiempo]['stop'], user_tag)   
 
 
         dataReporteFinal = ListaCultivoNewSerializer(cultivosXFinca, many=True).data
@@ -116,8 +114,6 @@ def generate_pdf_general_final(request):
         bodyReporte = []
 
         for dataXListaCultivo in dataReporteFinal:
-
-            print('Temperatura' in medicionesInflux)
 
             #Verifica si Influx tiene data de temperatura
             if 'Temperatura' in medicionesInflux:
@@ -208,6 +204,218 @@ def generate_pdf_general_final(request):
         'error': 'Permission Denied!'
     }
     return Response(msg, status=status.HTTP_403_FORBIDDEN)
+
+
+#Reporte Por Fincas Mejorado
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, BasicAuthentication,TokenAuthentication])
+@permission_classes([AllowAny])
+def generate_pdf_detalle_finca_final(request):
+    if request.user.is_authenticated:
+
+        medida = request.data.get("medida")
+        finca = request.data.get("finca")
+        tiempo = request.data.get("tiempo")
+        user_tag = request.data.get("user_tag")
+
+        now = datetime.now()
+        current_time = now.strftime("%d %b %y %H:%M:%S")
+
+        try:
+            usuario = Usuario.objects.get(user_tag=user_tag)
+        except Usuario.DoesNotExist:
+            return Response({'message': 'Usuario no existe'},status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            finca_data = Finca.objects.get(nombre=finca)
+        except Finca.DoesNotExist:
+            return Response({'message': 'Finca no existe'},status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            cultivosXFinca = ListaCultivo.objects.filter(id_user=usuario).filter(id_finca=finca_data)
+        except Usuario.DoesNotExist:
+            return Response({'message': 'No existe un cultivo registrado en esta finca'},status=status.HTTP_404_NOT_FOUND)
+
+
+        dataReporteFinal = ListaCultivoNewSerializer(cultivosXFinca, many=True).data
+
+        data = {}
+        bodyReporte = []
+
+        data['finca'] = finca
+        data['tiempo'] = tiempo
+        data['user_tag'] = user_tag
+
+        medicionesInfluxFincas = influxdbConnector.obtenerDataFincaDetalleFinal(constantes.TIEMPOS[tiempo]['start'], constantes.TIEMPOS[tiempo]['stop'], finca, user_tag)
+        medicionesInfluxNodos = influxdbConnector.obtenerDataNodoFinca(constantes.TIEMPOS[tiempo]['start'], constantes.TIEMPOS[tiempo]['stop'], finca, user_tag)
+
+        for dataXListaCultivo in dataReporteFinal:
+
+            if medida == 'temperatura':
+                dataXListaCultivo['data_nodos'] = []
+                dataXListaCultivo['medida_simbolo'] = '°C'
+
+                data['id']  = "temperatura"
+                data['medida'] = "temperatura"
+                data['modo'] = "inicio"
+                dataXListaCultivo['url_inicio'] = utils.get_url_grafana_by_time(data)+'&width=600&height=600'
+                data['modo'] = "historico"
+                dataXListaCultivo['url_historico'] = utils.get_url_grafana_by_time(data)
+                #Verifica si Influx de Finca tiene data de temperatura
+                if 'Temperatura' in medicionesInfluxFincas:
+                    for medicionInfluxTF in medicionesInfluxFincas['Temperatura']:
+                        if medicionInfluxTF[0] == dataXListaCultivo['finca']['nombre']:
+                            dataXListaCultivo['minimo_medido'] = medicionInfluxTF[1]
+                            dataXListaCultivo['promedio_medido'] = medicionInfluxTF[2]
+                            dataXListaCultivo['maximo_medido'] = medicionInfluxTF[3]
+                else:
+                    dataXListaCultivo['minimo_medido'] = '-'
+                    dataXListaCultivo['promedio_medido'] = '-'
+                    dataXListaCultivo['maximo_medido'] = '-'
+
+                #Verifica si Influx de Nodos tiene data de temperatura
+                if 'Temperatura' in medicionesInfluxNodos:
+                    for medicionInfluxTN in medicionesInfluxNodos['Temperatura']:
+                        dataXListaCultivo['data_nodos'].append(medicionInfluxTN)
+                else:
+                    dataXListaCultivo['data_nodos'].append(["-","-","-","-"])
+
+        
+            elif medida == 'humedad':
+                dataXListaCultivo['data_nodos'] = []
+                dataXListaCultivo['medida_simbolo'] = '%H'
+
+                data['id']  = "humedad"
+                data['medida'] = "humedad"
+                data['modo'] = "inicio"
+                dataXListaCultivo['url_inicio'] = utils.get_url_grafana_by_time(data)+'&width=800&height=800'
+                data['modo'] = "historico"
+                dataXListaCultivo['url_historico'] = utils.get_url_grafana_by_time(data)
+                #Verifica si Influx de Finca tiene data de humedad
+                if 'Humedad' in medicionesInfluxFincas:
+                    for medicionInfluxHF in medicionesInfluxFincas['Humedad']:
+                        if medicionInfluxHF[0] == dataXListaCultivo['finca']['nombre']:
+                            dataXListaCultivo['minimo_medido'] = medicionInfluxHF[1]
+                            dataXListaCultivo['promedio_medido'] = medicionInfluxHF[2]
+                            dataXListaCultivo['maximo_medido'] = medicionInfluxHF[3]
+                else:
+                    dataXListaCultivo['minimo_medido'] = '-'
+                    dataXListaCultivo['promedio_medido'] = '-'
+                    dataXListaCultivo['maximo_medido'] = '-'
+
+                #Verifica si Influx de Nodos tiene data de humedad
+                if 'Humedad' in medicionesInfluxNodos:
+                    for medicionInfluxHN in medicionesInfluxNodos['Humedad']:
+                        dataXListaCultivo['data_nodos'].append(medicionInfluxHN)
+                else:
+                    dataXListaCultivo['data_nodos'].append(["-","-","-","-"])
+            
+            elif medida == 'precipitacion':
+                dataXListaCultivo['data_nodos'] = []
+                dataXListaCultivo['medida_simbolo'] = 'ml'
+
+                data['id']  = "precipitacion"
+                data['medida'] = "precipitacion"
+                data['modo'] = "inicio"
+                dataXListaCultivo['url_inicio'] = utils.get_url_grafana_by_time(data)+'&width=800&height=800'
+                data['modo'] = "historico"
+                dataXListaCultivo['url_historico'] = utils.get_url_grafana_by_time(data)
+                #Verifica si Influx de Finca tiene data de humedad
+                if 'Precipitacion' in medicionesInfluxFincas:
+                    for medicionInfluxPF in medicionesInfluxFincas['Precipitacion']:
+                        if medicionInfluxPF[0] == dataXListaCultivo['finca']['nombre']:
+                            dataXListaCultivo['minimo_medido'] = medicionInfluxPF[1]
+                            dataXListaCultivo['promedio_medido'] = medicionInfluxPF[2]
+                            dataXListaCultivo['maximo_medido'] = medicionInfluxPF[3]
+                else:
+                    dataXListaCultivo['minimo_medido'] = '-'
+                    dataXListaCultivo['promedio_medido'] = '-'
+                    dataXListaCultivo['maximo_medido'] = '-'
+
+                #Verifica si Influx de Nodos tiene data de humedad
+                if 'Precipitacion' in medicionesInfluxNodos:
+                    for medicionInfluxPN in medicionesInfluxNodos['Precipitacion']:
+                        dataXListaCultivo['data_nodos'].append(medicionInfluxPN)
+                else:
+                    dataXListaCultivo['data_nodos'].append(["-","-","-","-"])
+
+            elif medida == 'radiacion':
+                dataXListaCultivo['data_nodos'] = []
+                dataXListaCultivo['medida_simbolo'] = 'lux'
+
+                data['id']  = "radiacion"
+                data['medida'] = "radiacion"
+                data['modo'] = "inicio"
+                dataXListaCultivo['url_inicio'] = utils.get_url_grafana_by_time(data)+'&width=800&height=800'
+                data['modo'] = "historico"
+                dataXListaCultivo['url_historico'] = utils.get_url_grafana_by_time(data)
+                #Verifica si Influx de Finca tiene data de humedad
+                if 'Radiación Solar' in medicionesInfluxFincas:
+                    for medicionInfluxRSF in medicionesInfluxFincas['Radiación Solar']:
+                        if medicionInfluxRSF[0] == dataXListaCultivo['finca']['nombre']:
+                            dataXListaCultivo['minimo_medido'] = medicionInfluxRSF[1]
+                            dataXListaCultivo['promedio_medido'] = medicionInfluxRSF[2]
+                            dataXListaCultivo['maximo_medido'] = medicionInfluxRSF[3]
+                else:
+                    dataXListaCultivo['minimo_medido'] = '-'
+                    dataXListaCultivo['promedio_medido'] = '-'
+                    dataXListaCultivo['maximo_medido'] = '-'
+
+                #Verifica si Influx de Nodos tiene data de humedad
+                if 'Radiación Solar' in medicionesInfluxNodos:
+                    for medicionInfluxRSN in medicionesInfluxNodos['Radiación Solar']:
+                        dataXListaCultivo['data_nodos'].append(medicionInfluxRSN)
+                else:
+                    dataXListaCultivo['data_nodos'].append(["-","-","-","-"])
+            
+            dataXListaCultivo['nombre_cultivo'] = dataXListaCultivo['cultivo']['nombre']
+            dataXListaCultivo['nombre_finca'] = dataXListaCultivo['finca']['nombre']
+            del dataXListaCultivo['cultivo']
+            del dataXListaCultivo['finca']
+            del dataXListaCultivo['user']
+            bodyReporte.append(dict(dataXListaCultivo))
+
+        #print(bodyReporte)
+        contexto = {
+            'planta': 'cebolla',
+            'user_tag': user_tag,
+            'fecha': current_time,
+            'finca': finca,
+            'logo' : constantes.LOGO,
+            'usuario': usuario,
+            'tiempo': constantes.TIEMPOS[tiempo]['title'],
+            'medida': constantes.IDS[medida]['title'],
+            'bodyReporte': bodyReporte,
+        }
+
+        # Rendered
+        html_string = render_to_string('reportes/reporte_detalle_finca_final.html', context=contexto)
+        html = HTML(string=html_string)
+
+        result = html.write_pdf()
+
+        # Creating http response
+        reporteCode = str(randint(0, 1000))+""+str(randint(0, 1000))+""+str(randint(0, 1000))
+
+        response = HttpResponse(content_type='application/pdf;')
+        response['Content-Disposition'] = 'inline; filename=reporte_finca_detallado_'+medida+'_'+reporteCode+'.pdf'
+        response['Content-Transfer-Encoding'] = 'binary'
+        with tempfile.NamedTemporaryFile(delete=False) as output:
+            output.write(result)
+            output.flush()
+            output = open(output.name, 'rb')
+            response.write(output.read())
+
+        return response
+
+    msg={
+            'error':'Permission Denied!'
+        }
+    return Response(msg,status=status.HTTP_403_FORBIDDEN)
+
+
+
+
 
 # Create your views here.
 @api_view(['POST'])

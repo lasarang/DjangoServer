@@ -15,9 +15,9 @@ FOOTER_1 = LOCAL_URL_TEST + 'static/images/assets/footer.png'
 FOOTER_2 = LOCAL_URL_TEST + 'static/images/assets/Logo-CIDIS.png'
 
 #Grafana path
-#GRAFANA_URL = 'https://graficas-cidis.ngrok.io/render/d-solo/1dyTkHZnk/plantilla?orgId=1&refresh=5s&panelId='
+GRAFANA_URL = 'https://graficas-cidis.ngrok.io/render/d-solo/1dyTkHZnk/plantilla?orgId=1&refresh=5s&panelId='
 
-GRAFANA_URL = 'http://localhost:3000/render/d-solo/1dyTkHZnk/plantilla?orgId=1&refresh=5s&panelId='
+#GRAFANA_URL = 'http://localhost:3000/render/d-solo/1dyTkHZnk/plantilla?orgId=1&refresh=5s&panelId='
 
 
 IDS = {
@@ -130,13 +130,13 @@ TIEMPOS = {
     },
     "Este mes" : {
         "url" : "&from=now%2FM&to=now",
-        "start" : "-1M",
+        "start" : "-1mo",
         "stop" : "now()",
         "title" : "este mes"
     },
     "Mes pasado" : {
         "url" : "&from=now-1M%2FM&to=now-1M%2FM",
-        "start" : "-2M",
+        "start" : "-2mo",
         "stop" : "-1M",
         "title" : "el mes pasado"
     },

@@ -114,64 +114,6 @@ def get_data_by_finca(start, stop, planta, bucket):
         print(e)
         return None
 
-#Query de influx para obtener data de finca
-def get_data_by_finca_final(start, stop, bucket):
-    try:
-        query = f'base = from(bucket: "Tester") \
-                            |> range(start: {start}, stop: {stop}) \
-                                |> filter(fn: (r) => r["_field"] == "valor") \
-                                |> filter(fn: (r) => r["usuario"] == "{bucket}") \
-                                |> group(columns: ["finca","_measurement"], mode:"by") \
-                    a = base \
-                        |> rename(columns: {{_value: "mean"}}) \
-                        |> mean(column: "mean") \
-                    b = base \
-                        |> rename(columns: {{_value: "min"}}) \
-                        |> min(column: "min") \
-                        |> map(fn: (r) => ({{ \
-                                r with min: float(v: r.min) \
-                            }})) \
-                    c = base \
-                        |> rename(columns: {{_value: "max"}}) \
-                        |> max(column: "max") \
-                        |> map(fn: (r) => ({{ \
-                                r with max: float(v: r.max) \
-                            }})) \
-                    d = join(tables: {{a: a, b: b}}, on: ["finca","_measurement"]) \
-                        |> keep(columns: ["finca","_measurement","mean","min","_time"]) \
-                    e = join(tables: {{a: d, b: c}}, on: ["finca","_measurement"]) \
-                        |> keep(columns: ["finca","_measurement","mean","min","max","_time"]) \
-                        |> yield()'
-        result = client.query_api().query(query, org=org)
-        nombres = {
-            "temperatura": "Temperatura",
-            "precipitacion": "Precipitacion",
-            "humedad": "Humedad",
-            "radiacion": "Radiación Solar"
-        }
-        simbolos = {
-            "Temperatura": "",
-            "Precipitacion": "",
-            "Humedad": "",
-            "Radiación Solar": "",
-        }
-        diccionario = {}
-        for table in result:
-            for record in table.records:
-                name = nombres[record.get_measurement()]
-                if name not in diccionario.keys():
-                    diccionario[name] = []
-
-                diccionario[name].append([record['finca'], str("%.2f" % round(record['min'], 2)) + simbolos[name], str(
-                    "%.2f" % round(record['mean'], 2)) + simbolos[name], str("%.2f" % round(record['max'], 2)) + simbolos[name]])
-
-        return diccionario
-    except InfluxDBError as e:
-        print(e)
-        return None
-
-
-
 def get_data_by_finca_detalle(start, stop, medida, planta, finca, bucket):
     try:
         query = f'base = from(bucket: "Tester") \
@@ -492,6 +434,187 @@ def get_sensores(medida, cultivo, finca, user_tag):
                 sensores.append(record.get_value())
 
         return sensores
+    except InfluxDBError as e:
+        print(e)
+        return None
+
+
+
+#=========================================================#
+#=========================================================#
+
+#Query de influx para obtener data de finca
+def obtenerDataFincaFinal(start, stop, bucket):
+    try:
+        query = f'base = from(bucket: "Tester") \
+                            |> range(start: {start}, stop: {stop}) \
+                                |> filter(fn: (r) => r["_field"] == "valor") \
+                                |> filter(fn: (r) => r["usuario"] == "{bucket}") \
+                                |> group(columns: ["finca","_measurement"], mode:"by") \
+                    a = base \
+                        |> rename(columns: {{_value: "mean"}}) \
+                        |> mean(column: "mean") \
+                    b = base \
+                        |> rename(columns: {{_value: "min"}}) \
+                        |> min(column: "min") \
+                        |> map(fn: (r) => ({{ \
+                                r with min: float(v: r.min) \
+                            }})) \
+                    c = base \
+                        |> rename(columns: {{_value: "max"}}) \
+                        |> max(column: "max") \
+                        |> map(fn: (r) => ({{ \
+                                r with max: float(v: r.max) \
+                            }})) \
+                    d = join(tables: {{a: a, b: b}}, on: ["finca","_measurement"]) \
+                        |> keep(columns: ["finca","_measurement","mean","min","_time"]) \
+                    e = join(tables: {{a: d, b: c}}, on: ["finca","_measurement"]) \
+                        |> keep(columns: ["finca","_measurement","mean","min","max","_time"]) \
+                        |> yield()'
+        result = client.query_api().query(query, org=org)
+        nombres = {
+            "temperatura": "Temperatura",
+            "precipitacion": "Precipitacion",
+            "humedad": "Humedad",
+            "radiacion": "Radiación Solar"
+        }
+        simbolos = {
+            "Temperatura": "",
+            "Precipitacion": "",
+            "Humedad": "",
+            "Radiación Solar": "",
+        }
+        diccionario = {}
+        for table in result:
+            for record in table.records:
+                name = nombres[record.get_measurement()]
+                if name not in diccionario.keys():
+                    diccionario[name] = []
+
+                diccionario[name].append([record['finca'], str("%.2f" % round(record['min'], 2)) + simbolos[name], str(
+                    "%.2f" % round(record['mean'], 2)) + simbolos[name], str("%.2f" % round(record['max'], 2)) + simbolos[name]])
+
+        return diccionario
+    except InfluxDBError as e:
+        print(e)
+        return None
+
+#Query de influx para obtener los detalles de una finca en específico
+def obtenerDataFincaDetalleFinal(start, stop, finca, bucket):
+    try:
+        query = f'base = from(bucket: "Tester") \
+                            |> range(start: {start}, stop: {stop}) \
+                                |> filter(fn: (r) => r["_field"] == "valor") \
+                                |> filter(fn: (r) => r["usuario"] == "{bucket}") \
+                                |> filter(fn: (r) => r["finca"] == "{finca}")  \
+                                |> group(columns: ["finca","_measurement"], mode:"by") \
+                    a = base \
+                        |> rename(columns: {{_value: "mean"}}) \
+                        |> mean(column: "mean") \
+                    b = base \
+                        |> rename(columns: {{_value: "min"}}) \
+                        |> min(column: "min") \
+                        |> map(fn: (r) => ({{ \
+                                r with min: float(v: r.min) \
+                            }})) \
+                    c = base \
+                        |> rename(columns: {{_value: "max"}}) \
+                        |> max(column: "max") \
+                        |> map(fn: (r) => ({{ \
+                                r with max: float(v: r.max) \
+                            }})) \
+                    d = join(tables: {{a: a, b: b}}, on: ["finca","_measurement"]) \
+                        |> keep(columns: ["finca","_measurement","mean","min","_time"]) \
+                    e = join(tables: {{a: d, b: c}}, on: ["finca","_measurement"]) \
+                        |> keep(columns: ["finca","_measurement","mean","min","max","_time"]) \
+                        |> yield()'
+
+        result = client.query_api().query(query, org=org)
+        nombres = {
+            "temperatura": "Temperatura",
+            "precipitacion": "Precipitacion",
+            "humedad": "Humedad",
+            "radiacion": "Radiación Solar"
+        }
+        simbolos = {
+            "Temperatura": "",
+            "Precipitacion": "",
+            "Humedad": "",
+            "Radiación Solar": "",
+        }
+
+        diccionario = {}
+
+        for table in result:
+            for record in table.records:
+                name = nombres[record.get_measurement()]
+                if name not in diccionario.keys():
+                    diccionario[name] = []
+
+                diccionario[name].append([record['finca'], str("%.2f" % round(record['min'], 2)) + simbolos[name], str(
+                    "%.2f" % round(record['mean'], 2)) + simbolos[name], str("%.2f" % round(record['max'], 2)) + simbolos[name]])
+
+        return diccionario
+
+    except InfluxDBError as e:
+        print(e)
+        return None
+
+#QUery de influx para obtener la información de los sensores
+def obtenerDataNodoFinca(start, stop, finca, bucket):
+    try:
+        query = f'base = from(bucket: "Tester") \
+                            |> range(start: {start}, stop: {stop}) \
+                                |> filter(fn: (r) => r["_field"] == "valor") \
+                                |> filter(fn: (r) => r["usuario"] == "{bucket}") \
+                                |> filter(fn: (r) => r["finca"] == "{finca}")  \
+                                |> group(columns: ["id_sensor","_measurement"], mode:"by") \
+                    a = base \
+                        |> rename(columns: {{_value: "mean"}}) \
+                        |> mean(column: "mean") \
+                    b = base \
+                        |> rename(columns: {{_value: "min"}}) \
+                        |> min(column: "min") \
+                        |> map(fn: (r) => ({{ \
+                                r with min: float(v: r.min) \
+                            }})) \
+                    c = base \
+                        |> rename(columns: {{_value: "max"}}) \
+                        |> max(column: "max") \
+                        |> map(fn: (r) => ({{ \
+                                r with max: float(v: r.max) \
+                            }})) \
+                    d = join(tables: {{a: a, b: b}}, on: ["id_sensor","_measurement"]) \
+                        |> keep(columns: ["id_sensor","_measurement","mean","min","_time"]) \
+                    e = join(tables: {{a: d, b: c}}, on: ["id_sensor","_measurement"]) \
+                        |> keep(columns: ["id_sensor","_measurement","mean","min","max","_time"]) \
+                        |> yield()'
+
+        result = client.query_api().query(query, org=org)
+        nombres = {
+            "temperatura": "Temperatura",
+            "precipitacion": "Precipitacion",
+            "humedad": "Humedad",
+            "radiacion": "Radiación Solar"
+        }
+        simbolos = {
+            "Temperatura": "",
+            "Precipitacion": "",
+            "Humedad": "",
+            "Radiación Solar": "",
+        }
+
+        diccionario = {}
+        for table in result:
+            for record in table.records:
+                name = nombres[record.get_measurement()]
+                if name not in diccionario.keys():
+                    diccionario[name] = []
+
+                diccionario[name].append([record['id_sensor'], str("%.2f" % round(record['min'], 2)) + simbolos[name], str(
+                    "%.2f" % round(record['mean'], 2)) + simbolos[name], str("%.2f" % round(record['max'], 2)) + simbolos[name]])
+
+        return diccionario
     except InfluxDBError as e:
         print(e)
         return None

@@ -186,17 +186,14 @@
             <br>
         </div>
         <br>
-        {% for cultivosXFica in bodyReporte %}
+        {% for cultivosXFinca in bodyReporte %}
             <div class="center">
                 <p>
-                    <h3><strong>Condiciones ideales para crecimiento de {{ cultivosXFica.nombre_cultivo }} en finca {{ cultivosXFica.nombre_finca }}</strong></h3>
+                    <h3><strong>Condiciones ideales para crecimiento en finca {{ cultivosXFinca.nombre_finca }}</strong></h3>
                 </p>
             </div>
             <table>
                 <thead>
-                    <tr>
-                        <th colspan="3"><strong>Medidas referenciales para cultivo</strong></th>
-                    </tr>
                     <tr>
                         <th>Medida</th>
                         <th>Mínimo</th>
@@ -206,23 +203,23 @@
                 <tbody>
                     <tr>
                         <td>Temperatura</td>
-                        <td>{{ cultivosXFica.minimo_temperatura }} °C</td>
-                        <td>{{ cultivosXFica.maximo_temperatura }} °C</td>
+                        <td>{{ cultivosXFinca.minimo_temperatura }} °C</td>
+                        <td>{{ cultivosXFinca.maximo_temperatura }} °C</td>
                     </tr>
                     <tr>
                         <td>Nivel de Lluvia</td>
-                        <td>{{ cultivosXFica.minimo_precipitacion }} ml</td>
-                        <td>{{ cultivosXFica.maximo_precipitacion }} ml</td>
+                        <td>{{ cultivosXFinca.minimo_precipitacion }} ml</td>
+                        <td>{{ cultivosXFinca.maximo_precipitacion }} ml</td>
                     </tr>
                     <tr>
                         <td>Humedad</td>
-                        <td>{{ cultivosXFica.minimo_humedad }} %H</td>
-                        <td>{{ cultivosXFica.maximo_humedad }} %H</td>
+                        <td>{{ cultivosXFinca.minimo_humedad }} %H</td>
+                        <td>{{ cultivosXFinca.maximo_humedad }} %H</td>
                     </tr>
                     <tr>
                         <td>Radiación Solar</td>
-                        <td>{{ cultivosXFica.minimo_radiacion }} lux</td>
-                        <td>{{ cultivosXFica.maximo_radiacion }} lux</td>
+                        <td>{{ cultivosXFinca.minimo_radiacion }} lux</td>
+                        <td>{{ cultivosXFinca.maximo_radiacion }} lux</td>
                     </tr>
                 </tbody>
             </table>
@@ -246,9 +243,9 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ cultivosXFica.minimo_temperatura_medido }}</td>
-                            <td>{{ cultivosXFica.promedio_temperatura_medido }}</td>
-                            <td>{{ cultivosXFica.maximo_temperatura_medido }}</td>
+                            <td>{{ cultivosXFinca.minimo_temperatura_medido }}</td>
+                            <td>{{ cultivosXFinca.promedio_temperatura_medido }}</td>
+                            <td>{{ cultivosXFinca.maximo_temperatura_medido }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -273,9 +270,9 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ cultivosXFica.minimo_precipitacion_medido }}</td>
-                            <td>{{ cultivosXFica.promedio_precipitacion_medido }}</td>
-                            <td>{{ cultivosXFica.maximo_precipitacion_medido }}</td>
+                            <td>{{ cultivosXFinca.minimo_precipitacion_medido }}</td>
+                            <td>{{ cultivosXFinca.promedio_precipitacion_medido }}</td>
+                            <td>{{ cultivosXFinca.maximo_precipitacion_medido }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -300,9 +297,9 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ cultivosXFica.minimo_humedad_medido }}</td>
-                            <td>{{ cultivosXFica.promedio_humedad_medido }}</td>
-                            <td>{{ cultivosXFica.maximo_humedad_medido }}</td>
+                            <td>{{ cultivosXFinca.minimo_humedad_medido }}</td>
+                            <td>{{ cultivosXFinca.promedio_humedad_medido }}</td>
+                            <td>{{ cultivosXFinca.maximo_humedad_medido }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -327,9 +324,9 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ cultivosXFica.minimo_radiacion_medido }}</td>
-                            <td>{{ cultivosXFica.promedio_radiacion_medido }}</td>
-                            <td>{{ cultivosXFica.maximo_radiacion_medido }}</td>
+                            <td>{{ cultivosXFinca.minimo_radiacion_medido }}</td>
+                            <td>{{ cultivosXFinca.promedio_radiacion_medido }}</td>
+                            <td>{{ cultivosXFinca.maximo_radiacion_medido }}</td>
                         </tr>
                     </tbody>
                 </table>
