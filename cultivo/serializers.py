@@ -60,9 +60,21 @@ class ListaCultivoNewSerializer(serializers.ModelSerializer):
                 )
 
 class ListaCultivoUserSerializer(serializers.ModelSerializer):
-    user = UsuarioNewSerializer(read_only=True,source='id_user')
+    cultivo = CultivoSerializer(read_only=True,source='id_cultivo')
+    finca = FincaSerializer(read_only=True,source='id_finca')
+    user = UsuarioSerializer(read_only=True,source='id_user')
     class Meta:
         model = ListaCultivo
         fields= ( 'id',
+                  'cultivo',
+                  'finca',
                   'user',
+                  'minimo_temperatura',
+                  'maximo_temperatura',
+                  'minimo_humedad',
+                  'maximo_humedad',
+                  'minimo_precipitacion',
+                  'maximo_precipitacion',
+                  'minimo_radiacion',
+                  'maximo_radiacion',
                 )
