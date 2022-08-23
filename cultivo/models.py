@@ -91,13 +91,10 @@ class ListaCultivo(models.Model):
     minimo_radiacion = models.FloatField(blank=True,default=0)
     maximo_radiacion = models.FloatField(blank=True,default=0)
 
-    class ListaCultivoForm(ModelForm):
-        class Meta:
-            ordering = ["id_cultivo.nombre" + "id_finca.nombre" + "id_user.user_tag"]
-            verbose_name = "ListaCultivo"
-            constraints = [
-                models.UniqueConstraint(fields=['id_cultivo', 'id_finca','id_user'], name='unique cultivoinfo')
-            ]
+    class Meta:
+        verbose_name = "ListaCultivo"
+        unique_together = ('id_finca', 'id_user',)
+        
     
     def __str__(self):
-        return self.id_cultivo.nombre + ' - ' + self.id_finca.nombre + ' - ' + self.id_user.user_tag
+        return self.id_cultivo.nombre + ' - ' + self.id_finca.nombre + ' - ' + self.id_user.user.first_name + '-' + self.id_user.user.last_name
