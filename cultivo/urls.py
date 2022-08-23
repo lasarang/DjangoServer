@@ -17,9 +17,10 @@ urlpatterns = [
    #path('crops_user_new',views.cultivos_user_new),
    #path('farms_user_new',views.fincas_user_new),
    #path('farms_crop_user_new',views.finca_cultivo_user_new),
-   path('farm_crop_user_create',views.farms_crop_user_create),
+   path('farm_crop_user_create',views.farm_crop_user_create),
    path('farm_crop_user/<int:pk>',views.finca_cultivo_user),
    path('farms_crops_users',views.farms_crops_users),
+   path('user_farms_new',views.user_farms_new),
 ]
 router = routers.DefaultRouter()
 #router.register('crops',views.CultivoViewSet,'crops')

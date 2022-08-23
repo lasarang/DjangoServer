@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from finca.serializers import FincaSerializer
-from users.serializers import UsuarioSerializer
+from users.serializers import UsuarioNewSerializer, UsuarioSerializer
 from .models import Cultivo, ListaCultivo
 
 class CultivoSerializer(serializers.ModelSerializer):
@@ -57,4 +57,12 @@ class ListaCultivoNewSerializer(serializers.ModelSerializer):
                   'maximo_precipitacion',
                   'minimo_radiacion',
                   'maximo_radiacion',
+                )
+
+class ListaCultivoUserSerializer(serializers.ModelSerializer):
+    user = UsuarioNewSerializer(read_only=True,source='id_user')
+    class Meta:
+        model = ListaCultivo
+        fields= ( 'id',
+                  'user',
                 )

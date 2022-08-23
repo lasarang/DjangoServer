@@ -3,7 +3,7 @@ from finca.serializers import FincaSerializer
 from users.models import Usuario
 from rest_framework import viewsets, permissions
 from .models import Cultivo, ListaCultivo
-from .serializers import CultivoSerializer, ListaCultivoSerializer, ListaCultivoNewSerializer
+from .serializers import CultivoSerializer, ListaCultivoSerializer, ListaCultivoNewSerializer, ListaCultivoUserSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
@@ -294,7 +294,7 @@ def finca_cultivo_user_new(request):
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication, BasicAuthentication, TokenAuthentication])
 @permission_classes([AllowAny])
-def farms_crop_user_create(request):
+def farm_crop_user_create(request):
     if request.user.is_authenticated:
 
         id_user = request.data.get("id_user")
@@ -405,3 +405,22 @@ def finca_cultivo_user(request, pk):
             'error': 'Permission Denied!'
         }
         return Response(msg, status=status.HTTP_403_FORBIDDEN)
+
+
+# Obtener el personal de una finca
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, BasicAuthentication, TokenAuthentication])
+@permission_classes([AllowAny])
+def user_farms_new(request):
+    
+    if request.user.is_authenticated:
+        finca = request.data.get("finca")
+        print(finca)
+        data = ListaCultivo.objects.filter(id_finca=finca)
+        serializer = ListaCultivoUserSerializer(data, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    msg = {
+        'error': 'Permission Denied!'
+    }
+    return Response(msg, status=status.HTTP_403_FORBIDDEN)
