@@ -339,14 +339,22 @@ def farms_crops_users(request):
     if len(request.GET.dict()) == 0:
 
         if request.user.is_authenticated:
-            data = ListaCultivo.objects.all()
-            serializer = ListaCultivoNewSerializer(data, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            
+            try:
+                usuario = Usuario.objects.get(user_tag=user_tag)
+            except Usuario.DoesNotExist:
+                return Response({'message': 'El Usuario no existe'},status=status.HTTP_404_NOT_FOUND)
 
-        msg = {
-            'error': 'Permission Denied!'
-        }
-        return Response(msg, status=status.HTTP_403_FORBIDDEN)
+            data = ListaCultivo.objects.filter(id_user=usuario)
+            serializer = ListaCultivoNewSerializer(data, many=True)
+
+            dataResp = []
+            for data in serializer.data:
+                if not [item for item in dataResp if item['finca']['nombre'] == data['finca']['nombre']]:
+                    dataResp.append(data)
+
+            print(dataResp)
+            return Response(dataResp, status=status.HTTP_200_OK)
 
     else:
         if request.user.is_authenticated:
