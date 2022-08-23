@@ -105,6 +105,10 @@
             color: #fff;
         }
 
+        .letter-black{
+            color:black
+        }
+
         @page {
             @top-left {
                 content: element(pageHeader);
@@ -203,7 +207,7 @@
                 <tbody>
                     <tr>
                         <td>Temperatura</td>
-                        <td>{{ cultivosXFinca.minimo_temperatura }} °C</td>
+                        <td class="letter-black">{{ cultivosXFinca.minimo_temperatura }} °C</td>
                         <td>{{ cultivosXFinca.maximo_temperatura }} °C</td>
                     </tr>
                     <tr>
