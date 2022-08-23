@@ -339,13 +339,7 @@ def farms_crops_users(request):
     if len(request.GET.dict()) == 0:
 
         if request.user.is_authenticated:
-            
-            try:
-                usuario = Usuario.objects.get(user_tag=user_tag)
-            except Usuario.DoesNotExist:
-                return Response({'message': 'El Usuario no existe'},status=status.HTTP_404_NOT_FOUND)
-
-            data = ListaCultivo.objects.filter(id_user=usuario)
+            data = ListaCultivo.objects.all()
             serializer = ListaCultivoNewSerializer(data, many=True)
 
             dataResp = []
