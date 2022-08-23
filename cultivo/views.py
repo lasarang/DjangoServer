@@ -414,7 +414,7 @@ def finca_cultivo_user(request, pk):
 def user_farms_new(request):
     
     if request.user.is_authenticated:
-        finca = request.data.get("finca")
+        finca = request.GET["finca"]
         print(finca)
         data = ListaCultivo.objects.filter(id_finca=finca)
         serializer = ListaCultivoUserSerializer(data, many=True)
