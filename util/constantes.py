@@ -137,7 +137,7 @@ TIEMPOS = {
     "Mes pasado" : {
         "url" : "&from=now-1M%2FM&to=now-1M%2FM",
         "start" : "-2mo",
-        "stop" : "-1M",
+        "stop" : "-1mo",
         "title" : "el mes pasado"
     },
     "Este año" : {
