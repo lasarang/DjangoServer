@@ -811,7 +811,7 @@ def generate_pdf_detalle_finca_medidas_final(request):
                     data['modo'] = "historico"
                     dataXListaCultivoMedida['url_historico'] = utils.get_url_grafana_by_time(data)
                     #Verifica si Influx de Finca tiene data de temperatura
-                    if 'Temperatura' in medicionesInfluxFincas:
+                    if 'Temperatura' in medicionesInfluxFincas and medicionesInfluxFincas['Temperatura'] != None:
                         for medicionInfluxTF in medicionesInfluxFincas['Temperatura']:
                             if medicionInfluxTF[0] == dataXListaCultivo['finca']['nombre']:
                                 dataXListaCultivoMedida['minimo_medido'] = medicionInfluxTF[1]
@@ -841,7 +841,7 @@ def generate_pdf_detalle_finca_medidas_final(request):
                     data['modo'] = "historico"
                     dataXListaCultivoMedida['url_historico'] = utils.get_url_grafana_by_time(data)
                     #Verifica si Influx de Finca tiene data de humedad
-                    if 'Humedad' in medicionesInfluxFincas:
+                    if 'Humedad' in medicionesInfluxFincas and medicionesInfluxFincas['Humedad'] != None:
                         for medicionInfluxHF in medicionesInfluxFincas['Humedad']:
                             if medicionInfluxHF[0] == dataXListaCultivo['finca']['nombre']:
                                 dataXListaCultivoMedida['minimo_medido'] = medicionInfluxHF[1]
@@ -871,7 +871,7 @@ def generate_pdf_detalle_finca_medidas_final(request):
                     data['modo'] = "historico"
                     dataXListaCultivoMedida['url_historico'] = utils.get_url_grafana_by_time(data)
                     #Verifica si Influx de Finca tiene data de humedad
-                    if 'Precipitacion' in medicionesInfluxFincas:
+                    if 'Precipitacion' in medicionesInfluxFincas and medicionesInfluxFincas['Precipitacion'] != None:
                         for medicionInfluxPF in medicionesInfluxFincas['Precipitacion']:
                             if medicionInfluxPF[0] == dataXListaCultivo['finca']['nombre']:
                                 dataXListaCultivoMedida['minimo_medido'] = medicionInfluxPF[1]
@@ -901,7 +901,7 @@ def generate_pdf_detalle_finca_medidas_final(request):
                     data['modo'] = "historico"
                     dataXListaCultivoMedida['url_historico'] = utils.get_url_grafana_by_time(data)
                     #Verifica si Influx de Finca tiene data de humedad
-                    if 'Radiación Solar' in medicionesInfluxFincas:
+                    if 'Radiación Solar' in medicionesInfluxFincas and medicionesInfluxFincas['Radiación Solar'] != None:
                         for medicionInfluxRSF in medicionesInfluxFincas['Radiación Solar']:
                             if medicionInfluxRSF[0] == dataXListaCultivo['finca']['nombre']:
                                 dataXListaCultivoMedida['minimo_medido'] = medicionInfluxRSF[1]
@@ -919,9 +919,9 @@ def generate_pdf_detalle_finca_medidas_final(request):
                     else:
                         dataXListaCultivoMedida['data_nodos'].append(["-","-","-","-"])
                 
-                print("======================================")
-                print(dataXListaCultivoMedida)
-                print("======================================")
+                #print("======================================")
+                #print(dataXListaCultivoMedida)
+                #print("======================================")
                 dataXListaCultivo['dataMedida'].append(dataXListaCultivoMedida)
 
             dataXListaCultivo['nombre_cultivo'] = dataXListaCultivo['cultivo']['nombre']
@@ -931,7 +931,7 @@ def generate_pdf_detalle_finca_medidas_final(request):
             del dataXListaCultivo['user']
             bodyReporte.append(dict(dataXListaCultivo))
 
-        print(bodyReporte)
+        #print(bodyReporte)
         contexto = {
             'user_tag': user_tag,
             'fecha': current_time,
